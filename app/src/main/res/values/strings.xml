@@ -8,4 +8,20 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Exclusive Products</string>
+    <string name="slide_1_desc">Get products which are unique and only available at our shops !</string>
+
+    <string name="slide_2_title">Cheap Rates</string>
+    <string name="slide_2_desc">Products at such an affordable rates !</string>
+
+    <string name="slide_3_title">Hassle Free Payments</string>
+    <string name="slide_3_desc">With various pay options , you can easily pay in a minute !</string>
+
+    <string name="slide_4_title">Fast Delivery</string>
+    <string name="slide_4_desc">Blazing fast order delivery within time !</string>
 </resources>
