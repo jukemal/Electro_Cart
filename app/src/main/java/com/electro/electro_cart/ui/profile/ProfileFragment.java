@@ -1,9 +1,11 @@
 package com.electro.electro_cart.ui.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -12,14 +14,34 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+
+import com.electro.electro_cart.SplashActivity;
+import com.google.firebase.auth.FirebaseAuth;
+
 import com.electro.electro_cart.R;
 
 public class ProfileFragment extends Fragment {
+
+    private FirebaseAuth firebaseAuth;
 
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         final TextView textView = root.findViewById(R.id.text_profile);
+
+        firebaseAuth=FirebaseAuth.getInstance();
+
+        Button button=root.findViewById(R.id.btnLogout);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firebaseAuth.signOut();
+                Intent intent=new Intent(getActivity(), SplashActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
 
         ProfileViewModel profileViewModel=new ViewModelProvider(requireActivity()).get(ProfileViewModel.class);
 
