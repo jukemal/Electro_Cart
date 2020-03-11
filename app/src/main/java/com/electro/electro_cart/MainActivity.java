@@ -2,6 +2,7 @@ package com.electro.electro_cart;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -54,4 +55,18 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+//        if (item.getItemId() == R.id.add_item) {
+//            //check if any items to add
+//            if (removedItems.size() != 0) {
+//                addRemovedItemToList();
+//            } else {
+//                Toast.makeText(this, "Nothing to add", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+        return true;
+    }
 }
