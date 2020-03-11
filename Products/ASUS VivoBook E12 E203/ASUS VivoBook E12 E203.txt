@@ -1,0 +1,30 @@
+name			ASUS VivoBook E12 E203
+CPU				Intel Celeron N4000
+GPU				Intel UHD Graphics 600
+Display			11.6”, HD (1366 x 768), TN
+HDD/SSD			32GB eMMC
+RAM				2GB
+OS				Windows 10
+Battery			38Wh, 2-cell
+Body material	Plastic
+Dimensions		286 x 193 x 17 mm (11.26" x 7.60" x 0.67")
+Weight			0.98 kg (2.2 lbs)
+
+Ports and connectivity
+
+1x USB Type-C 3.0 (3.1 Gen 1)
+2x USB Type-A 3.0 (3.1 Gen 1)
+HDMI 1
+Card reader microSD
+Ethernet LAN 
+Wi-Fi 802.11ac
+Bluetooth 4.1
+Audio jack combo audio/microphone jack
+
+Features
+
+Web camera VGA
+Microphone Digital array microphone
+Speakers Stereo 2W
+Optical drive 
+Security Lock slot

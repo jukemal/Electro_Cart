@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.electro.electro_cart.ui.home.HomeFragment"
-        android:label="Home"
+        android:label="Electro Cart"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/navigation_search"
@@ -25,5 +25,29 @@
         android:name="com.electro.electro_cart.ui.profile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/navigation_promotions"
+        android:name="com.electro.electro_cart.ui.promotions.PromotionsFragment"
+        android:label="Promotions" />
+    <fragment
+        android:id="@+id/navigation_favourite"
+        android:name="com.electro.electro_cart.ui.favourites.FavouriteFragment"
+        android:label="Favourite" />
+    <fragment
+        android:id="@+id/navigation_orderHistory"
+        android:name="com.electro.electro_cart.ui.orderHistory.OrderHistoryFragment"
+        android:label="Order History" />
+    <fragment
+        android:id="@+id/navigation_payment"
+        android:name="com.electro.electro_cart.ui.payment.PaymentFragment"
+        android:label="Payment" />
+    <fragment
+        android:id="@+id/navigation_contactUs"
+        android:name="com.electro.electro_cart.ui.contactUs.ContactUsFragment"
+        android:label="Contact Us" />
+    <fragment
+        android:id="@+id/navigation_aboutUs"
+        android:name="com.electro.electro_cart.ui.aboutUs.AboutUsFragment"
+        android:label="About Us" />
 
 </navigation>

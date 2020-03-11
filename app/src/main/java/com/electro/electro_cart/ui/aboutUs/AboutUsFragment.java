@@ -1,4 +1,4 @@
-package com.electro.electro_cart.ui.home;
+package com.electro.electro_cart.ui.aboutUs;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,27 +14,21 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.electro.electro_cart.R;
 
-public class HomeFragment extends Fragment {
+public class AboutUsFragment extends Fragment {
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_about_us, container, false);
 
         final TextView textView = root.findViewById(R.id.text_home);
 
-        HomeViewModel homeViewModel=new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        AboutUsViewModel aboutUsViewModel=new ViewModelProvider(requireActivity()).get(AboutUsViewModel.class);
 
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        aboutUsViewModel.getText().observe(requireActivity(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
         });
-
-
-
-
-
         return root;
     }
 }
