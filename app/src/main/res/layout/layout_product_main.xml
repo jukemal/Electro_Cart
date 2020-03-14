@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.synnapps.carouselview.CarouselView
+        android:id="@+id/carouselView_product"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        app:fillColor="#FFFFFFFF"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:pageColor="#00000000"
+        app:radius="6dp"
+        app:slideInterval="10000"
+        app:strokeColor="#FF777777"
+        app:strokeWidth="1dp" />
+
+    <TextView
+        android:id="@+id/product_name_product"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="7dp"
+        android:singleLine="false"
+        android:text="HP Pavilion 15"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/set_favourite_product"
+        app:layout_constraintTop_toBottomOf="@id/carouselView_product" />
+
+    <ToggleButton
+        android:id="@+id/set_favourite_product"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/carouselView_product"
+        android:background="@drawable/button_favorite"
+        android:text=""
+        android:textOn=""
+        android:textOff=""/>
+
+    <ImageButton
+        android:id="@+id/imgBtn_ar_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/product_name_product"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:src="@drawable/ic_linked_camera_black_24dp"
+        android:layout_marginTop="16dp"
+        android:paddingStart="10dp"
+        android:background="?android:selectableItemBackground"
+        android:tint="@color/colorPrimary"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AR Mode"
+        app:layout_constraintLeft_toRightOf="@id/imgBtn_ar_product"
+        app:layout_constraintTop_toBottomOf="@id/product_name_product"
+        android:layout_marginTop="16dp"
+        android:paddingStart="10dp"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

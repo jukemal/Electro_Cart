@@ -26,11 +26,12 @@ public class Product implements Serializable {
     private String ar_link;
     private @ServerTimestamp Date timestamp;
     private int promotion;
+    private boolean favourite;
 
     public Product() {
     }
 
-    public Product(String id, String name, int price, EnumProductType productType, List<String> available_stores, String description, Specification specification, List<String> ports, List<String> features, List<String> image_links, String ar_link, Date timestamp, int promotion) {
+    public Product(String id, String name, int price, EnumProductType productType, List<String> available_stores, String description, Specification specification, List<String> ports, List<String> features, List<String> image_links, String ar_link, Date timestamp, int promotion, boolean favourite) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -44,6 +45,7 @@ public class Product implements Serializable {
         this.ar_link = ar_link;
         this.timestamp = timestamp;
         this.promotion = promotion;
+        this.favourite = favourite;
     }
 
     public String getId() {
@@ -150,6 +152,14 @@ public class Product implements Serializable {
         this.promotion = promotion;
     }
 
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -166,6 +176,7 @@ public class Product implements Serializable {
                 ", ar_link='" + ar_link + '\'' +
                 ", timestamp=" + timestamp +
                 ", promotion=" + promotion +
+                ", favourite=" + favourite +
                 '}';
     }
 }
