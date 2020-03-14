@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
 
 //        if (item.getItemId() == R.id.add_item) {
 //            //check if any items to add
@@ -67,6 +67,6 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(this, "Nothing to add", Toast.LENGTH_SHORT).show();
 //            }
 //        }
-        return true;
+//        return true;
     }
 }
