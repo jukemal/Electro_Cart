@@ -57,16 +57,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-
-//        if (item.getItemId() == R.id.add_item) {
-//            //check if any items to add
-//            if (removedItems.size() != 0) {
-//                addRemovedItemToList();
-//            } else {
-//                Toast.makeText(this, "Nothing to add", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//        return true;
+        switch (item.getItemId()){
+            case R.id.action_cart:
+                Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_to_navigation_cart);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
