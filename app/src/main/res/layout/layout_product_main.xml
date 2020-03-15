@@ -45,29 +45,61 @@
         android:background="@drawable/button_favorite"
         android:text=""
         android:textOn=""
-        android:textOff=""/>
+        android:textOff="" />
 
-    <ImageButton
-        android:id="@+id/imgBtn_ar_product"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_ar_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/product_name_product"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:src="@drawable/ic_linked_camera_black_24dp"
         android:layout_marginTop="16dp"
-        android:paddingStart="10dp"
-        android:background="?android:selectableItemBackground"
-        android:tint="@color/colorPrimary"
-        />
+        android:layout_marginStart="8dp"
+        android:text="View in AR"
+        android:textColor="#000000"
+        app:icon="@drawable/ic_view_in_ar_new_googblue_48dp"
+        app:iconSize="30dp"
+        app:layout_constraintTop_toBottomOf="@id/product_name_product"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
 
     <TextView
+        android:id="@+id/product_description_product"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="5dp"
+        android:singleLine="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_ar_product" />
+
+    <TextView
+        android:id="@+id/product_price_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="AR Mode"
-        app:layout_constraintLeft_toRightOf="@id/imgBtn_ar_product"
-        app:layout_constraintTop_toBottomOf="@id/product_name_product"
-        android:layout_marginTop="16dp"
-        android:paddingStart="10dp"/>
+        android:paddingStart="15dp"
+        android:paddingTop="10dp"
+        android:text="25,000 LKR"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_description_product" />
 
+    <RatingBar
+        android:id="@+id/product_rating_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:isIndicator="true"
+        android:rating="4"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_price_product" />
 
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_price_product"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

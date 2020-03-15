@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,7 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.ViewAdapters.HomeRecyclerViewAdapter;
 import com.electro.electro_cart.models.Product;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
@@ -23,45 +33,43 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
 
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private final CollectionReference collectionReference = db.collection("products");
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+
+        ProgressBar progressBar=root.findViewById(R.id.progressBar_home);
 
         recyclerView=root.findViewById(R.id.recyclerview_home);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
-        //HomeViewModel homeViewModel=new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        final List<Product> productList = new ArrayList<>();
 
-//        homeViewModel.getProducts(getContext()).observe(getViewLifecycleOwner(), new Observer<List<Product>>() {
-//            @Override
-//            public void onChanged(List<Product> products) {
-//                homeRecyclerViewAdapter=new HomeRecyclerViewAdapter(getActivity(),products);
-//                recyclerView.setAdapter(homeRecyclerViewAdapter);
-//            }
-//        });
-
-        /*collectionReference.get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot product : task.getResult()) {
-                                    Product p = product.toObject(Product.class);
-                                    productList.add(p);
-                                }
+        collectionReference.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot product : task.getResult()) {
+                                Product p = product.toObject(Product.class);
+                                productList.add(p);
                             }
 
-                            products.postValue(productList);
+                            homeRecyclerViewAdapter=new HomeRecyclerViewAdapter(getActivity(),productList);
+                            progressBar.setVisibility(View.GONE);
+                            recyclerView.setAdapter(homeRecyclerViewAdapter);
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(context, "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
-                        }
-                    });*/
-
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+            }
+        });
 
         return root;
     }

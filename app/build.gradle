@@ -25,6 +25,11 @@ android {
     dataBinding {
         enabled = true
     }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -46,10 +51,12 @@ dependencies {
     implementation "com.airbnb.android:lottie:3.4.0"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.1.0"
-    compileOnly 'org.projectlombok:lombok:1.18.12'
+    implementation 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-beta01"
     implementation 'com.synnapps:carouselview:0.1.5'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.15.0'
+    implementation 'com.google.ar:core:1.15.0'
 }

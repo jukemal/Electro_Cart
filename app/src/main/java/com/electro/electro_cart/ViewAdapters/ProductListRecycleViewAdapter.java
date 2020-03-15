@@ -2,13 +2,11 @@ package com.electro.electro_cart.ViewAdapters;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
@@ -22,26 +20,26 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
 
 import java.util.List;
 
-public class HomeRowRecycleViewAdapter extends RecyclerView.Adapter<HomeRowRecycleViewAdapter.HomeRowRecycleViewHolder> {
+public class ProductListRecycleViewAdapter extends RecyclerView.Adapter<ProductListRecycleViewAdapter.ProductListRecycleViewHolder> {
 
     Context context;
     List<Product> products;
 
-    public HomeRowRecycleViewAdapter(Context context, List<Product> products) {
+    public ProductListRecycleViewAdapter(Context context, List<Product> products) {
         this.context = context;
         this.products = products;
     }
 
     @NonNull
     @Override
-    public HomeRowRecycleViewAdapter.HomeRowRecycleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_item, parent, false);
+    public ProductListRecycleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_list, parent, false);
 
-        return new HomeRowRecycleViewHolder(view);
+        return new ProductListRecycleViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HomeRowRecycleViewAdapter.HomeRowRecycleViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProductListRecycleViewHolder holder, int position) {
         final Product product = products.get(position);
 
         Glide.with(context)
@@ -53,33 +51,37 @@ public class HomeRowRecycleViewAdapter extends RecyclerView.Adapter<HomeRowRecyc
                 .fallback(R.drawable.error_loading)
                 .into(holder.imageView);
 
-        holder.textView.setText(product.getName());
+        holder.textViewName.setText(product.getName());
+
+        holder.textViewPrice.setText(String.valueOf(product.getPrice()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle bundle=new Bundle();
-                bundle.putString("id",product.getId());
-                Navigation.findNavController(view).navigate(R.id.action_to_navigation_product,bundle);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", product.getId());
+                Navigation.findNavController(view).navigate(R.id.action_to_navigation_product, bundle);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return products.size() <= 8 ? products.size() : 8;
+        return products.size();
     }
 
-    public class HomeRowRecycleViewHolder extends RecyclerView.ViewHolder {
+    public class ProductListRecycleViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
-        TextView textView;
+        TextView textViewName;
+        TextView textViewPrice;
 
-        public HomeRowRecycleViewHolder(@NonNull View itemView) {
+        public ProductListRecycleViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            imageView = itemView.findViewById(R.id.imgThumb_item);
-            textView = itemView.findViewById(R.id.txtTitle_item);
+            imageView = itemView.findViewById(R.id.imgThumb_item_product);
+            textViewName = itemView.findViewById(R.id.txt_name_item_product);
+            textViewPrice = itemView.findViewById(R.id.txt_price_item_product);
         }
     }
 }

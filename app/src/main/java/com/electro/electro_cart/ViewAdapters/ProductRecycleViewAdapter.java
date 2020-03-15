@@ -1,6 +1,8 @@
 package com.electro.electro_cart.ViewAdapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.Product;
+import com.google.ar.core.ArCoreApk;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
@@ -30,7 +35,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     Context context;
     List<Product> products;
     String id;
-    ProductRecycleViewAdapterClickListener productRecycleViewAdapterClickListener;
+
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private final CollectionReference collectionReference = db.collection("products");
 
     private static final int MAIN_LAYOUT = 0;
     private static final int BOUGHT_TOGETHER_LAYOUT = 1;
@@ -40,11 +48,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int BY_FEATURE_LAYOUT = 5;
     private static final int COMMENT_LAYOUT = 6;
 
-    public ProductRecycleViewAdapter(Context context, List<Product> products, String id, ProductRecycleViewAdapterClickListener productRecycleViewAdapterClickListener) {
+    public ProductRecycleViewAdapter(Context context, List<Product> products, String id) {
         this.context = context;
         this.products = products;
         this.id = id;
-        this.productRecycleViewAdapterClickListener = productRecycleViewAdapterClickListener;
     }
 
     @NonNull
@@ -71,7 +78,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             Product product = null;
 
             for (Product p : products) {
-                if (p.getId() == id) {
+                if (p.getId().equals(id)) {
                     product = p;
                     break;
                 } else {
@@ -87,11 +94,26 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             mainLayoutViewHolder.toggleButtonFavourite.setChecked(isFavourite);
 
-            final Product finalProduct = product;
             mainLayoutViewHolder.toggleButtonFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    //productRecycleViewAdapterClickListener.setFavourite(id,isChecked);
+                    collectionReference.document(id).update("favourite",isChecked);
+                }
+            });
+
+            ArCoreApk.Availability availability=ArCoreApk.getInstance().checkAvailability(context);
+
+            if (!availability.isSupported()){
+                mainLayoutViewHolder.buttonAR.setEnabled(false);
+            }
+
+            mainLayoutViewHolder.buttonAR.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+                    sceneViewerIntent.setData(Uri.parse("https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf?mode=ar_only"));
+                    sceneViewerIntent.setPackage("com.google.ar.core");
+                    context.startActivity(sceneViewerIntent);
                 }
             });
         } else {
@@ -133,6 +155,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         CarouselView carouselView;
         TextView textName;
         ToggleButton toggleButtonFavourite;
+        Button buttonAR;
 
         public MainLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -140,6 +163,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             carouselView = itemView.findViewById(R.id.carouselView_product);
             textName = itemView.findViewById(R.id.product_name_product);
             toggleButtonFavourite = itemView.findViewById(R.id.set_favourite_product);
+            buttonAR=itemView.findViewById(R.id.btn_ar_product);
         }
     }
 
