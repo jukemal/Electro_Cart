@@ -25,55 +25,103 @@
         android:id="@+id/navigation_home"
         android:name="com.electro.electro_cart.ui.home.HomeFragment"
         android:label="Electro Cart"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right">
 
     </fragment>
     <fragment
         android:id="@+id/navigation_search"
         android:name="com.electro.electro_cart.ui.search.SearchFragment"
         android:label="Search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_tracking"
         android:name="com.electro.electro_cart.ui.tracking.TrackingFragment"
         android:label="Tracking"
-        tools:layout="@layout/fragment_tracking" />
+        tools:layout="@layout/fragment_tracking"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.electro.electro_cart.ui.profile.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_promotions"
         android:name="com.electro.electro_cart.ui.promotions.PromotionsFragment"
-        android:label="Promotions" />
+        android:label="Promotions"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_favourite"
         android:name="com.electro.electro_cart.ui.favourites.FavouriteFragment"
-        android:label="Favourite" />
+        android:label="Favourite"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_orderHistory"
         android:name="com.electro.electro_cart.ui.orderHistory.OrderHistoryFragment"
-        android:label="Order History" />
+        android:label="Order History"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_payment"
         android:name="com.electro.electro_cart.ui.payment.PaymentFragment"
-        android:label="Payment" />
+        android:label="Payment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_contactUs"
         android:name="com.electro.electro_cart.ui.contactUs.ContactUsFragment"
-        android:label="Contact Us" />
+        android:label="Contact Us"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_aboutUs"
         android:name="com.electro.electro_cart.ui.aboutUs.AboutUsFragment"
-        android:label="About Us" />
+        android:label="About Us"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_product"
         android:name="com.electro.electro_cart.ui.ProductFragment"
-        android:label="Product" />
+        android:label="Product"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
     <fragment
         android:id="@+id/navigation_cart"
         android:name="com.electro.electro_cart.ui.CartFragment"
-        android:label="Cart" />
+        android:label="Cart"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
 
 </navigation>

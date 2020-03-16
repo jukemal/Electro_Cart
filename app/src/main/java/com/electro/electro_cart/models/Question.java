@@ -1,6 +1,7 @@
 package com.electro.electro_cart.models;
 
 import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.Serializable;
@@ -12,19 +13,21 @@ import lombok.Builder;
 public class Question implements Serializable {
     private @DocumentId String id;
     private String question;
+    private DocumentReference questionOwner;
     private String answer;
-    private String name;
+    private DocumentReference answerOwner;
     private @ServerTimestamp Date timestamp;
     private int votes;
 
     public Question() {
     }
 
-    public Question(String id, String question, String answer, String name, Date timestamp, int votes) {
+    public Question(String id, String question, DocumentReference questionOwner, String answer, DocumentReference answerOwner, Date timestamp, int votes) {
         this.id = id;
         this.question = question;
+        this.questionOwner = questionOwner;
         this.answer = answer;
-        this.name = name;
+        this.answerOwner = answerOwner;
         this.timestamp = timestamp;
         this.votes = votes;
     }
@@ -45,6 +48,14 @@ public class Question implements Serializable {
         this.question = question;
     }
 
+    public DocumentReference getQuestionOwner() {
+        return questionOwner;
+    }
+
+    public void setQuestionOwner(DocumentReference questionOwner) {
+        this.questionOwner = questionOwner;
+    }
+
     public String getAnswer() {
         return answer;
     }
@@ -53,12 +64,12 @@ public class Question implements Serializable {
         this.answer = answer;
     }
 
-    public String getName() {
-        return name;
+    public DocumentReference getAnswerOwner() {
+        return answerOwner;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAnswerOwner(DocumentReference answerOwner) {
+        this.answerOwner = answerOwner;
     }
 
     public Date getTimestamp() {
@@ -82,8 +93,9 @@ public class Question implements Serializable {
         return "Question{" +
                 "id='" + id + '\'' +
                 ", question='" + question + '\'' +
+                ", questionOwner=" + questionOwner +
                 ", answer='" + answer + '\'' +
-                ", name='" + name + '\'' +
+                ", answerOwner=" + answerOwner +
                 ", timestamp=" + timestamp +
                 ", votes=" + votes +
                 '}';

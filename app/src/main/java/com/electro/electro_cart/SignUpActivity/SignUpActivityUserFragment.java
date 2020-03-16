@@ -2,6 +2,7 @@ package com.electro.electro_cart.SignUpActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,18 @@ import androidx.fragment.app.Fragment;
 
 import com.electro.electro_cart.LoginActivity;
 import com.electro.electro_cart.R;
+import com.electro.electro_cart.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignUpActivityUserFragment extends Fragment {
 
@@ -26,6 +33,10 @@ public class SignUpActivityUserFragment extends Fragment {
     Button btnSignUp;
     TextInputEditText txtName, txtPhoneNumber, txtEmail, txtPassword;
     TextInputLayout txtNameLayout, txtPhoneNumberLayout, txtEmailLayout, txtPasswordLayout;
+
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private final CollectionReference collectionReference = db.collection("users");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,10 +96,40 @@ public class SignUpActivityUserFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(getContext(), "SignUp Successfully.", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getContext(), LoginActivity.class);
-                                startActivity(intent);
-                                getActivity().finish();
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                                Log.e("user",user.getEmail());
+
+                                User userLocal=null;
+
+                                if (user != null) {
+                                    userLocal=User.builder()
+                                            .email(user.getEmail())
+                                            .id(user.getUid())
+                                            .telephoneNumber(phoneNumber)
+                                            .location(null)
+                                            .name(name)
+                                            .build();
+                                }
+
+                                collectionReference
+                                        .document(user.getUid())
+                                        .set(userLocal)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(getContext(), "SignUp Successfully.", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getContext(), LoginActivity.class);
+                                        startActivity(intent);
+                                        getActivity().finish();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(getContext(), "SignUp Unsuccessful, Please Try Again", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
                             } else {
                                 Toast.makeText(getContext(), "SignUp Unsuccessful, Please Try Again", Toast.LENGTH_SHORT).show();
                             }
