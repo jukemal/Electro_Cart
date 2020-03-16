@@ -21,6 +21,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
@@ -36,6 +37,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
@@ -44,12 +46,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    Context context;
-    List<Product> products;
-    String id;
-    ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface;
+    private Context context;
+    private List<Product> products;
+    private String id;
+    private ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface;
+
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -113,6 +119,14 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             }
 
             final MainLayoutViewHolder mainLayoutViewHolder = (MainLayoutViewHolder) holder;
+
+            Glide.with(context)
+                    .load(storage.getReferenceFromUrl(product.getImage_links().get(0)))
+                    .transition(withCrossFade())
+                    .fitCenter()
+                    .error(R.drawable.error_loading)
+                    .fallback(R.drawable.error_loading)
+                    .into(mainLayoutViewHolder.imageViewImage);
 
             mainLayoutViewHolder.textName.setText(product.getName());
 
@@ -286,7 +300,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public class MainLayoutViewHolder extends RecyclerView.ViewHolder {
 
-        CarouselView carouselView;
+        ImageView imageViewImage;
         TextView textName;
         ToggleButton toggleButtonFavourite;
         Button buttonAR;
@@ -302,7 +316,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         public MainLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            carouselView = itemView.findViewById(R.id.carouselView_product);
+            imageViewImage = itemView.findViewById(R.id.imageView_image_product);
             textName = itemView.findViewById(R.id.product_name_product);
             toggleButtonFavourite = itemView.findViewById(R.id.set_favourite_product);
             buttonAR = itemView.findViewById(R.id.btn_ar_product);

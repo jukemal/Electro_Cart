@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
 
     Context context;
     List<CartItem> cartItemList;
+
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -61,10 +64,9 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
                         Product product =documentSnapshot.toObject(Product.class);
 
                         Glide.with(context)
-                                .load("https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-ultra-.jpg")
+                                .load(storage.getReferenceFromUrl(product.getImage_links().get(0)))
                                 .transition(withCrossFade())
                                 .fitCenter()
-                                .placeholder(R.drawable.loading)
                                 .error(R.drawable.error_loading)
                                 .fallback(R.drawable.error_loading)
                                 .into(holder.imageView);

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.Product;
+import com.google.firebase.storage.FirebaseStorage;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -24,6 +25,8 @@ public class ProductListRecycleViewAdapter extends RecyclerView.Adapter<ProductL
 
     Context context;
     List<Product> products;
+
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     public ProductListRecycleViewAdapter(Context context, List<Product> products) {
         this.context = context;
@@ -43,10 +46,9 @@ public class ProductListRecycleViewAdapter extends RecyclerView.Adapter<ProductL
         final Product product = products.get(position);
 
         Glide.with(context)
-                .load("https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s20-ultra-.jpg")
+                .load(storage.getReferenceFromUrl(product.getImage_links().get(0)))
                 .transition(withCrossFade())
                 .fitCenter()
-                .placeholder(R.drawable.loading)
                 .error(R.drawable.error_loading)
                 .fallback(R.drawable.error_loading)
                 .into(holder.imageView);
