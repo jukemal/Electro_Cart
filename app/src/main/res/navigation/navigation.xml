@@ -21,6 +21,22 @@
         app:popEnterAnim="@anim/slide_in_left"
         app:popExitAnim="@anim/slide_out_right"/>
 
+    <action
+        android:id="@+id/action_to_navigation_select_product_product_compare"
+        app:destination="@id/navigation_select_product_product_compare"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+
+    <action
+        android:id="@+id/action_to_navigation_product_compare"
+        app:destination="@id/navigation_product_compare"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.electro.electro_cart.ui.home.HomeFragment"
@@ -123,5 +139,13 @@
         app:exitAnim="@anim/slide_out_left"
         app:popEnterAnim="@anim/slide_in_left"
         app:popExitAnim="@anim/slide_out_right"/>
+    <fragment
+        android:id="@+id/navigation_select_product_product_compare"
+        android:name="com.electro.electro_cart.ui.SelectProductProductCompareFragment"
+        android:label="Select Product to Compare" />
+    <fragment
+        android:id="@+id/navigation_product_compare"
+        android:name="com.electro.electro_cart.ui.ProductCompareFragment"
+        android:label="Compare Product" />
 
 </navigation>
