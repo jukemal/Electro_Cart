@@ -20,8 +20,6 @@ public class Product implements Serializable {
     @Singular private List<String> available_stores;
     private String description;
     private Specification specification;
-    @Singular private List<String> ports;
-    @Singular private List<String> features;
     @Singular private List<String> image_links;
     private String ar_link;
     private @ServerTimestamp Date timestamp;
@@ -32,7 +30,7 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public Product(String id, String name, int price, EnumProductType productType, List<String> available_stores, String description, Specification specification, List<String> ports, List<String> features, List<String> image_links, String ar_link, Date timestamp, int promotion, boolean favourite, int rating) {
+    public Product(String id, String name, int price, EnumProductType productType, List<String> available_stores, String description, Specification specification, List<String> image_links, String ar_link, Date timestamp, int promotion, boolean favourite, int rating) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -40,8 +38,6 @@ public class Product implements Serializable {
         this.available_stores = available_stores;
         this.description = description;
         this.specification = specification;
-        this.ports = ports;
-        this.features = features;
         this.image_links = image_links;
         this.ar_link = ar_link;
         this.timestamp = timestamp;
@@ -106,22 +102,6 @@ public class Product implements Serializable {
         this.specification = specification;
     }
 
-    public List<String> getPorts() {
-        return ports;
-    }
-
-    public void setPorts(List<String> ports) {
-        this.ports = ports;
-    }
-
-    public List<String> getFeatures() {
-        return features;
-    }
-
-    public void setFeatures(List<String> features) {
-        this.features = features;
-    }
-
     public List<String> getImage_links() {
         return image_links;
     }
@@ -180,8 +160,6 @@ public class Product implements Serializable {
                 ", available_stores=" + available_stores +
                 ", description='" + description + '\'' +
                 ", specification=" + specification +
-                ", ports=" + ports +
-                ", features=" + features +
                 ", image_links=" + image_links +
                 ", ar_link='" + ar_link + '\'' +
                 ", timestamp=" + timestamp +

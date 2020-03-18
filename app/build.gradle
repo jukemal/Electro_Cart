@@ -61,4 +61,5 @@ dependencies {
     implementation 'com.google.ar:core:1.15.0'
     implementation 'com.firebaseui:firebase-ui-storage:6.2.0'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.3'
 }

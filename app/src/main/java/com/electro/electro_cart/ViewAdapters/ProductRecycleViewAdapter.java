@@ -158,7 +158,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             });
 
             if (product.getDescription() == null) {
-                mainLayoutViewHolder.textViewDescription.setVisibility(View.GONE);
+                mainLayoutViewHolder.textViewDescription.setVisibility(View.INVISIBLE);
             } else {
                 mainLayoutViewHolder.textViewDescription.setText(product.getDescription());
             }
@@ -263,7 +263,19 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 }
             });
 
+            //Cart End
             //----------------------------------------------------------------------------------------------------------
+            //Product Features
+
+            mainLayoutViewHolder.recyclerViewProductFeatures.setHasFixedSize(true);
+            mainLayoutViewHolder.recyclerViewProductFeatures.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+
+            ProductFeaturesRecyclerViewAdapter productFeaturesRecyclerViewAdapter=new ProductFeaturesRecyclerViewAdapter(context,product.getSpecification());
+            mainLayoutViewHolder.recyclerViewProductFeatures.setAdapter(productFeaturesRecyclerViewAdapter);
+
+            //Product Features End
+            //----------------------------------------------------------------------------------------------------------
+
         } else {
             RecommendedLayoutViewHolder recommendedLayoutViewHolder = (RecommendedLayoutViewHolder) holder;
 
@@ -312,6 +324,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         TextView textViewCartCount;
         Button buttonAddToCart;
         Button buttonRemoveFromCart;
+        RecyclerView recyclerViewProductFeatures;
 
         public MainLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -328,6 +341,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewCartCount = itemView.findViewById(R.id.text_cart_num_product);
             buttonAddToCart = itemView.findViewById(R.id.btn_add_to_cart_product);
             buttonRemoveFromCart = itemView.findViewById(R.id.btn_remove_from_cart_product);
+            recyclerViewProductFeatures=itemView.findViewById(R.id.product_features_recyclerView);
         }
     }
 
