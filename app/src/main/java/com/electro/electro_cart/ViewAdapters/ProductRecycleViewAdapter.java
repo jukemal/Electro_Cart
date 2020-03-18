@@ -3,6 +3,7 @@ package com.electro.electro_cart.ViewAdapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,35 +11,63 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.electro.electro_cart.R;
+import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.ar.core.ArCoreApk;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    Context context;
-    List<Product> products;
-    String id;
+    private Context context;
+    private List<Product> products;
+    private String id;
+    private ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface;
+
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private final CollectionReference collectionReference = db.collection("products");
+    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+    private final CollectionReference collectionReferenceProduct = db.collection("products");
+
+    private final CollectionReference collectionReferenceCart = db.collection("users")
+            .document(firebaseAuth.getCurrentUser().getUid())
+            .collection("cart");
+
+    private final DocumentReference documentReferenceProduct;
 
     private static final int MAIN_LAYOUT = 0;
     private static final int BOUGHT_TOGETHER_LAYOUT = 1;
@@ -48,10 +77,13 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int BY_FEATURE_LAYOUT = 5;
     private static final int COMMENT_LAYOUT = 6;
 
-    public ProductRecycleViewAdapter(Context context, List<Product> products, String id) {
+    public ProductRecycleViewAdapter(Context context, List<Product> products, String id, ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface) {
         this.context = context;
         this.products = products;
         this.id = id;
+        this.productRecycleViewAdapterClickInterface = productRecycleViewAdapterClickInterface;
+
+        documentReferenceProduct = collectionReferenceProduct.document(id);
     }
 
     @NonNull
@@ -88,6 +120,14 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             final MainLayoutViewHolder mainLayoutViewHolder = (MainLayoutViewHolder) holder;
 
+            Glide.with(context)
+                    .load(storage.getReferenceFromUrl(product.getImage_links().get(0)))
+                    .transition(withCrossFade())
+                    .fitCenter()
+                    .error(R.drawable.error_loading)
+                    .fallback(R.drawable.error_loading)
+                    .into(mainLayoutViewHolder.imageViewImage);
+
             mainLayoutViewHolder.textName.setText(product.getName());
 
             final boolean isFavourite = product.isFavourite();
@@ -97,13 +137,13 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             mainLayoutViewHolder.toggleButtonFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    collectionReference.document(id).update("favourite",isChecked);
+                    collectionReferenceProduct.document(id).update("favourite", isChecked);
                 }
             });
 
-            ArCoreApk.Availability availability=ArCoreApk.getInstance().checkAvailability(context);
+            ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
 
-            if (!availability.isSupported()){
+            if (!availability.isSupported()) {
                 mainLayoutViewHolder.buttonAR.setEnabled(false);
             }
 
@@ -116,6 +156,126 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     context.startActivity(sceneViewerIntent);
                 }
             });
+
+            if (product.getDescription() == null) {
+                mainLayoutViewHolder.textViewDescription.setVisibility(View.INVISIBLE);
+            } else {
+                mainLayoutViewHolder.textViewDescription.setText(product.getDescription());
+            }
+
+            mainLayoutViewHolder.textViewPrice.setText(String.valueOf(product.getPrice()) + " LKR");
+
+            mainLayoutViewHolder.ratingBar.setRating(product.getRating());
+
+            //------------------------------------------------------------------------------------------------------------
+
+            //Cart
+
+            mainLayoutViewHolder.floatingActionButtonDown.setEnabled(false);
+            mainLayoutViewHolder.buttonRemoveFromCart.setVisibility(View.GONE);
+            mainLayoutViewHolder.buttonAddToCart.setEnabled(false);
+
+            collectionReferenceCart.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            CartItem cartItem = document.toObject(CartItem.class);
+
+                            if (cartItem.getProductID().equals(id)) {
+                                mainLayoutViewHolder.textViewCartCount.setText(String.valueOf(cartItem.getItemCount()));
+                                mainLayoutViewHolder.buttonAddToCart.setText("Update Cart");
+
+                                mainLayoutViewHolder.floatingActionButtonDown.setEnabled(true);
+                                mainLayoutViewHolder.buttonRemoveFromCart.setVisibility(View.VISIBLE);
+                                mainLayoutViewHolder.buttonAddToCart.setEnabled(true);
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+
+            mainLayoutViewHolder.floatingActionButtonUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mainLayoutViewHolder.textViewCartCount.setText(String.valueOf(Integer.parseInt(mainLayoutViewHolder.textViewCartCount.getText().toString()) + 1));
+                    mainLayoutViewHolder.floatingActionButtonDown.setEnabled(true);
+                    mainLayoutViewHolder.buttonAddToCart.setEnabled(true);
+                }
+            });
+
+            mainLayoutViewHolder.floatingActionButtonDown.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (Integer.parseInt(mainLayoutViewHolder.textViewCartCount.getText().toString()) <= 0) {
+                        mainLayoutViewHolder.floatingActionButtonDown.setEnabled(false);
+                        mainLayoutViewHolder.buttonAddToCart.setEnabled(false);
+                    } else {
+                        mainLayoutViewHolder.textViewCartCount.setText(String.valueOf(Integer.parseInt(mainLayoutViewHolder.textViewCartCount.getText().toString()) - 1));
+                    }
+                }
+            });
+
+            mainLayoutViewHolder.buttonAddToCart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (Integer.parseInt(mainLayoutViewHolder.textViewCartCount.getText().toString())>=1) {
+                        CartItem cartItem = CartItem.builder()
+                                .ProductID(id)
+                                .productReference(documentReferenceProduct)
+                                .itemCount(Integer.parseInt(mainLayoutViewHolder.textViewCartCount.getText().toString()))
+                                .build();
+
+                        collectionReferenceCart.document(id).set(cartItem)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(context, "Added to Cart", Toast.LENGTH_SHORT).show();
+                                        Navigation.findNavController(view).navigate(R.id.action_to_navigation_cart);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(context, "Error Adding to Cart. Try Again", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            });
+
+            mainLayoutViewHolder.buttonRemoveFromCart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    collectionReferenceCart.document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(context, "Removed from Cart.", Toast.LENGTH_SHORT).show();
+                            productRecycleViewAdapterClickInterface.RemoveFromCartClicked();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+                }
+            });
+
+            //Cart End
+            //----------------------------------------------------------------------------------------------------------
+            //Product Features
+
+            mainLayoutViewHolder.recyclerViewProductFeatures.setHasFixedSize(true);
+            mainLayoutViewHolder.recyclerViewProductFeatures.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+
+            ProductFeaturesRecyclerViewAdapter productFeaturesRecyclerViewAdapter=new ProductFeaturesRecyclerViewAdapter(context,product.getSpecification());
+            mainLayoutViewHolder.recyclerViewProductFeatures.setAdapter(productFeaturesRecyclerViewAdapter);
+
+            //Product Features End
+            //----------------------------------------------------------------------------------------------------------
+
         } else {
             RecommendedLayoutViewHolder recommendedLayoutViewHolder = (RecommendedLayoutViewHolder) holder;
 
@@ -152,18 +312,36 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public class MainLayoutViewHolder extends RecyclerView.ViewHolder {
 
-        CarouselView carouselView;
+        ImageView imageViewImage;
         TextView textName;
         ToggleButton toggleButtonFavourite;
         Button buttonAR;
+        TextView textViewDescription;
+        TextView textViewPrice;
+        RatingBar ratingBar;
+        FloatingActionButton floatingActionButtonDown;
+        FloatingActionButton floatingActionButtonUp;
+        TextView textViewCartCount;
+        Button buttonAddToCart;
+        Button buttonRemoveFromCart;
+        RecyclerView recyclerViewProductFeatures;
 
         public MainLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            carouselView = itemView.findViewById(R.id.carouselView_product);
+            imageViewImage = itemView.findViewById(R.id.imageView_image_product);
             textName = itemView.findViewById(R.id.product_name_product);
             toggleButtonFavourite = itemView.findViewById(R.id.set_favourite_product);
-            buttonAR=itemView.findViewById(R.id.btn_ar_product);
+            buttonAR = itemView.findViewById(R.id.btn_ar_product);
+            textViewDescription = itemView.findViewById(R.id.product_description_product);
+            textViewPrice = itemView.findViewById(R.id.product_price_product);
+            ratingBar = itemView.findViewById(R.id.product_rating_product);
+            floatingActionButtonDown = itemView.findViewById(R.id.floating_action_button_cart_down_product);
+            floatingActionButtonUp = itemView.findViewById(R.id.floating_action_button_cart_up_product);
+            textViewCartCount = itemView.findViewById(R.id.text_cart_num_product);
+            buttonAddToCart = itemView.findViewById(R.id.btn_add_to_cart_product);
+            buttonRemoveFromCart = itemView.findViewById(R.id.btn_remove_from_cart_product);
+            recyclerViewProductFeatures=itemView.findViewById(R.id.product_features_recyclerView);
         }
     }
 

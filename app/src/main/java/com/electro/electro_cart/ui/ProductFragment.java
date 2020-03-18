@@ -18,12 +18,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.ViewAdapters.ProductRecycleViewAdapter;
+import com.electro.electro_cart.ViewAdapters.ProductRecycleViewAdapterClickInterface;
 import com.electro.electro_cart.models.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -33,7 +36,7 @@ import java.util.List;
 public class ProductFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    ProductRecycleViewAdapter productRecycleViewAdapter;
+    private ProductRecycleViewAdapter productRecycleViewAdapter;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -45,7 +48,7 @@ public class ProductFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_product, container, false);
 
         final String id = getArguments().getString("id");
-
+        Log.e("ID",id);
 
         ProgressBar progressBar=root.findViewById(R.id.progressBar_product);
 
@@ -53,19 +56,28 @@ public class ProductFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-        final List<Product> productList = new ArrayList<>();
-
         collectionReference.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<Product> productList=new ArrayList<>();
+
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot product : task.getResult()) {
                                 Product p = product.toObject(Product.class);
                                 productList.add(p);
                             }
 
-                            productRecycleViewAdapter = new ProductRecycleViewAdapter(getActivity(), productList, id);
+                            productRecycleViewAdapter = new ProductRecycleViewAdapter(getActivity(), productList, id, new ProductRecycleViewAdapterClickInterface() {
+                                @Override
+                                public void RemoveFromCartClicked() {
+                                    recyclerView.setAdapter(null);
+                                    recyclerView.setLayoutManager(null);
+                                    recyclerView.setAdapter(productRecycleViewAdapter);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                                    productRecycleViewAdapter.notifyDataSetChanged();
+                                }
+                            });
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setAdapter(productRecycleViewAdapter);
                         }
@@ -73,7 +85,7 @@ public class ProductFragment extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
                     }
         });
 

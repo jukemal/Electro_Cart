@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="71dp"
         android:layout_marginTop="27dp"
-        android:text="P4"
+        android:text="Add to cart"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnP3" />
 

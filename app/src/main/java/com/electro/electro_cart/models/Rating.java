@@ -1,6 +1,7 @@
 package com.electro.electro_cart.models;
 
 import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.Serializable;
@@ -15,20 +16,19 @@ public class Rating implements Serializable {
     private String header;
     private String description;
     private int score;
-    private String name;
-    private @ServerTimestamp
-    Date timestamp;
+    private DocumentReference ownerName;
+    private @ServerTimestamp Date timestamp;
     private int votes;
 
     public Rating() {
     }
 
-    public Rating(String id, String header, String description, int score, String name, Date timestamp, int votes) {
+    public Rating(String id, String header, String description, int score, DocumentReference ownerName, Date timestamp, int votes) {
         this.id = id;
         this.header = header;
         this.description = description;
         this.score = score;
-        this.name = name;
+        this.ownerName = ownerName;
         this.timestamp = timestamp;
         this.votes = votes;
     }
@@ -65,12 +65,12 @@ public class Rating implements Serializable {
         this.score = score;
     }
 
-    public String getName() {
-        return name;
+    public DocumentReference getOwnerName() {
+        return ownerName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOwnerName(DocumentReference ownerName) {
+        this.ownerName = ownerName;
     }
 
     public Date getTimestamp() {
@@ -96,7 +96,7 @@ public class Rating implements Serializable {
                 ", header='" + header + '\'' +
                 ", description='" + description + '\'' +
                 ", score=" + score +
-                ", name='" + name + '\'' +
+                ", ownerName=" + ownerName +
                 ", timestamp=" + timestamp +
                 ", votes=" + votes +
                 '}';

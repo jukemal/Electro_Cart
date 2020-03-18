@@ -3,9 +3,11 @@ package com.electro.electro_cart.models;
 import com.google.firebase.firestore.DocumentId;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 
 @Builder
 public class Specification implements Serializable {
@@ -19,11 +21,14 @@ public class Specification implements Serializable {
     private String material;
     private String dimensions;
     private String weight;
+    @Singular
+    private List<String> ports;
+    @Singular private List<String> features;
 
     public Specification() {
     }
 
-    public Specification(String cpu, String gpu, String display, String memory, String ram, String os, String battery, String material, String dimensions, String weight) {
+    public Specification(String cpu, String gpu, String display, String memory, String ram, String os, String battery, String material, String dimensions, String weight, List<String> ports, List<String> features) {
         this.cpu = cpu;
         this.gpu = gpu;
         this.display = display;
@@ -34,6 +39,8 @@ public class Specification implements Serializable {
         this.material = material;
         this.dimensions = dimensions;
         this.weight = weight;
+        this.ports = ports;
+        this.features = features;
     }
 
     public String getCpu() {
@@ -116,6 +123,22 @@ public class Specification implements Serializable {
         this.weight = weight;
     }
 
+    public List<String> getPorts() {
+        return ports;
+    }
+
+    public void setPorts(List<String> ports) {
+        this.ports = ports;
+    }
+
+    public List<String> getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(List<String> features) {
+        this.features = features;
+    }
+
     @Override
     public String toString() {
         return "Specification{" +
@@ -129,6 +152,8 @@ public class Specification implements Serializable {
                 ", material='" + material + '\'' +
                 ", dimensions='" + dimensions + '\'' +
                 ", weight='" + weight + '\'' +
+                ", ports=" + ports +
+                ", features=" + features +
                 '}';
     }
 }
