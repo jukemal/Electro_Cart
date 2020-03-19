@@ -17,7 +17,7 @@
         android:padding="0dp">
 
         <ImageView
-            android:id="@+id/imgThumb_item_cart"
+            android:id="@+id/imgThumb_item_order_history_nested"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="fitCenter"
@@ -27,7 +27,7 @@
             android:contentDescription="Product Image" />
 
         <TextView
-            android:id="@+id/txt_name_item_cart"
+            android:id="@+id/txt_name_item_order_history_nested"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -39,12 +39,12 @@
             android:textSize="14sp"
             android:text=""
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/imgThumb_item_cart"
+            app:layout_constraintLeft_toRightOf="@id/imgThumb_item_order_history_nested"
             app:layout_constraintRight_toRightOf="parent" />
 
 
         <TextView
-            android:id="@+id/txt_price_item_cart"
+            android:id="@+id/txt_price_item_order_history_nested"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -53,11 +53,11 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/txt_name_item_cart"
-            app:layout_constraintLeft_toRightOf="@id/imgThumb_item_cart"
+            app:layout_constraintTop_toBottomOf="@id/txt_name_item_order_history_nested"
+            app:layout_constraintLeft_toRightOf="@id/imgThumb_item_order_history_nested"
             app:layout_constraintRight_toRightOf="parent" />
         <TextView
-            android:id="@+id/txt_count_item_cart"
+            android:id="@+id/txt_count_item_order_history_nested"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -66,8 +66,8 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/txt_price_item_cart"
-            app:layout_constraintLeft_toRightOf="@id/imgThumb_item_cart"
+            app:layout_constraintTop_toBottomOf="@id/txt_price_item_order_history_nested"
+            app:layout_constraintLeft_toRightOf="@id/imgThumb_item_order_history_nested"
             app:layout_constraintRight_toRightOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

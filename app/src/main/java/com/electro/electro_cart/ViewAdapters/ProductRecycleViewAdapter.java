@@ -2,21 +2,27 @@ package com.electro.electro_cart.ViewAdapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +47,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
+import android.view.ViewGroup.LayoutParams;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -53,9 +61,11 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private Context context;
     private List<Product> products;
     private String id;
+    NavController navController;
+
     private ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface;
 
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -77,11 +87,12 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int BY_FEATURE_LAYOUT = 5;
     private static final int COMMENT_LAYOUT = 6;
 
-    public ProductRecycleViewAdapter(Context context, List<Product> products, String id, ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface) {
+    public ProductRecycleViewAdapter(Context context, List<Product> products, String id, NavController navController,ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface) {
         this.context = context;
         this.products = products;
         this.id = id;
         this.productRecycleViewAdapterClickInterface = productRecycleViewAdapterClickInterface;
+        this.navController=navController;
 
         documentReferenceProduct = collectionReferenceProduct.document(id);
     }
@@ -158,7 +169,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             });
 
             if (product.getDescription() == null) {
-                mainLayoutViewHolder.textViewDescription.setVisibility(View.INVISIBLE);
+                mainLayoutViewHolder.textViewDescription.setVisibility(View.GONE);
             } else {
                 mainLayoutViewHolder.textViewDescription.setText(product.getDescription());
             }
@@ -167,6 +178,49 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             mainLayoutViewHolder.ratingBar.setRating(product.getRating());
 
+            //------------------------------------------------------------------------------------------------------------
+
+            //Product Compare
+            Product finalProduct = product;
+            mainLayoutViewHolder.buttonCompareProducts.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    View popupView = LayoutInflater.from(context).inflate(R.layout.layout_product_compare_popup, null);
+                    PopupWindow popupWindow = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, true);
+                    popupWindow.setAnimationStyle(R.style.Animation_Design_BottomSheetDialog);
+                    popupView.setBackground(new ColorDrawable(Color.parseColor("#e2e2e2")));
+                    popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+                    ImageView imageViewImageProductCompare=popupView.findViewById(R.id.imageView_image_product_compare);
+
+                    Glide.with(context)
+                            .load(storage.getReferenceFromUrl(finalProduct.getImage_links().get(0)))
+                            .transition(withCrossFade())
+                            .fitCenter()
+                            .error(R.drawable.error_loading)
+                            .fallback(R.drawable.error_loading)
+                            .into(imageViewImageProductCompare);
+
+                    TextView textViewNameProductCompare=popupView.findViewById(R.id.product_name_product_compare);
+
+                    textViewNameProductCompare.setText(finalProduct.getName());
+
+                    FloatingActionButton buttonSelectProduct=popupView.findViewById(R.id.floating_action_button_add_product_product_compare);
+
+                    buttonSelectProduct.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Bundle bundle=new Bundle();
+                            bundle.putString("id",finalProduct.getId());
+                            navController.navigate(R.id.action_to_navigation_select_product_product_compare,bundle);
+
+                            popupWindow.dismiss();
+                        }
+                    });
+                }
+            });
+
+            //Product Compare End
             //------------------------------------------------------------------------------------------------------------
 
             //Cart
@@ -221,7 +275,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             mainLayoutViewHolder.buttonAddToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (Integer.parseInt(mainLayoutViewHolder.textViewCartCount.getText().toString())>=1) {
+                    if (Integer.parseInt(mainLayoutViewHolder.textViewCartCount.getText().toString()) >= 1) {
                         CartItem cartItem = CartItem.builder()
                                 .ProductID(id)
                                 .productReference(documentReferenceProduct)
@@ -270,7 +324,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             mainLayoutViewHolder.recyclerViewProductFeatures.setHasFixedSize(true);
             mainLayoutViewHolder.recyclerViewProductFeatures.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
-            ProductFeaturesRecyclerViewAdapter productFeaturesRecyclerViewAdapter=new ProductFeaturesRecyclerViewAdapter(context,product.getSpecification());
+            ProductFeaturesRecyclerViewAdapter productFeaturesRecyclerViewAdapter = new ProductFeaturesRecyclerViewAdapter(context, product.getSpecification());
             mainLayoutViewHolder.recyclerViewProductFeatures.setAdapter(productFeaturesRecyclerViewAdapter);
 
             //Product Features End
@@ -325,6 +379,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         Button buttonAddToCart;
         Button buttonRemoveFromCart;
         RecyclerView recyclerViewProductFeatures;
+        Button buttonCompareProducts;
 
         public MainLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -341,7 +396,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             textViewCartCount = itemView.findViewById(R.id.text_cart_num_product);
             buttonAddToCart = itemView.findViewById(R.id.btn_add_to_cart_product);
             buttonRemoveFromCart = itemView.findViewById(R.id.btn_remove_from_cart_product);
-            recyclerViewProductFeatures=itemView.findViewById(R.id.product_features_recyclerView);
+            recyclerViewProductFeatures = itemView.findViewById(R.id.product_features_recyclerView);
+            buttonCompareProducts = itemView.findViewById(R.id.btn_compare_product);
         }
     }
 

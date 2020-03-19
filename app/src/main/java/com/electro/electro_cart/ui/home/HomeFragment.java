@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.ViewAdapters.HomeRecyclerViewAdapter;
@@ -68,6 +69,44 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+            }
+        });
+
+        SwipeRefreshLayout swipeRefreshLayout=root.findViewById(R.id.swipe_refresh_home);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                recyclerView.setVisibility(View.INVISIBLE);
+
+                recyclerView.setAdapter(null);
+                recyclerView.setLayoutManager(null);
+
+                collectionReference.get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                List<Product> refreshedProductList=new ArrayList<>();
+
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot product : task.getResult()) {
+                                        Product p = product.toObject(Product.class);
+                                        refreshedProductList.add(p);
+                                    }
+
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
+                                    homeRecyclerViewAdapter=new HomeRecyclerViewAdapter(getActivity(),refreshedProductList);
+                                    recyclerView.setAdapter(homeRecyclerViewAdapter);
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+                    }
+                });
             }
         });
 

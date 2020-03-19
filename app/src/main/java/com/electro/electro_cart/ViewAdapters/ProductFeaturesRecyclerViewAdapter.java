@@ -33,7 +33,6 @@ public class ProductFeaturesRecyclerViewAdapter extends RecyclerView.Adapter<Pro
         ObjectMapper objectMapper=new ObjectMapper();
 
         specificationMap=objectMapper.convertValue(specification,LinkedHashMap.class);
-        Log.e("map",specificationMap.toString());
     }
 
     @NonNull
