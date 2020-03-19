@@ -13,17 +13,19 @@ public class User implements Serializable {
     private String telephoneNumber;
     private String name;
     private String location;
+    private int points;
     private @ServerTimestamp Date timestamp;
 
     public User() {
     }
 
-    public User(String id, String email, String telephoneNumber, String name, String location, Date timestamp) {
+    public User(String id, String email, String telephoneNumber, String name, String location, int points, Date timestamp) {
         this.id = id;
         this.email = email;
         this.telephoneNumber = telephoneNumber;
         this.name = name;
         this.location = location;
+        this.points = points;
         this.timestamp = timestamp;
     }
 
@@ -67,6 +69,14 @@ public class User implements Serializable {
         this.location = location;
     }
 
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
     public Date getTimestamp() {
         return timestamp;
     }
@@ -83,6 +93,7 @@ public class User implements Serializable {
                 ", telephoneNumber='" + telephoneNumber + '\'' +
                 ", name='" + name + '\'' +
                 ", location='" + location + '\'' +
+                ", points=" + points +
                 ", timestamp=" + timestamp +
                 '}';
     }

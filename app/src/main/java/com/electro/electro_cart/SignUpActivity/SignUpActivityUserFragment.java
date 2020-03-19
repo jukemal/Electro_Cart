@@ -109,6 +109,7 @@ public class SignUpActivityUserFragment extends Fragment {
                                             .telephoneNumber(phoneNumber)
                                             .location(null)
                                             .name(name)
+                                            .points(0)
                                             .build();
                                 }
 
