@@ -75,6 +75,8 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
 
                         holder.textViewPrice.setText(String.valueOf(product.getPrice()));
 
+                        holder.textViewCount.setText("X "+String.valueOf(cartItem.getItemCount()));
+
                         holder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -105,6 +107,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
         ImageView imageView;
         TextView textViewName;
         TextView textViewPrice;
+        TextView textViewCount;
 
         public CartRecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -112,6 +115,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
             imageView=itemView.findViewById(R.id.imgThumb_item_cart);
             textViewName=itemView.findViewById(R.id.txt_name_item_cart);
             textViewPrice=itemView.findViewById(R.id.txt_price_item_cart);
+            textViewCount=itemView.findViewById(R.id.txt_count_item_cart);
         }
     }
 }

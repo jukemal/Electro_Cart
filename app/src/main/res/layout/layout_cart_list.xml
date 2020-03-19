@@ -42,6 +42,7 @@
             app:layout_constraintLeft_toRightOf="@id/imgThumb_item_cart"
             app:layout_constraintRight_toRightOf="parent" />
 
+
         <TextView
             android:id="@+id/txt_price_item_cart"
             android:layout_width="0dp"
@@ -53,6 +54,19 @@
             android:paddingRight="5dp"
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/txt_name_item_cart"
+            app:layout_constraintLeft_toRightOf="@id/imgThumb_item_cart"
+            app:layout_constraintRight_toRightOf="parent" />
+        <TextView
+            android:id="@+id/txt_count_item_cart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="7dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/txt_price_item_cart"
             app:layout_constraintLeft_toRightOf="@id/imgThumb_item_cart"
             app:layout_constraintRight_toRightOf="parent" />
 
