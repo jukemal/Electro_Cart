@@ -149,6 +149,8 @@ public class CartFragment extends Fragment {
         buttonProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                buttonProceed.setEnabled(false);
+
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
 
                 builder.setMessage("Do you want to proceed with the purchase?")
@@ -194,36 +196,36 @@ public class CartFragment extends Fragment {
                                                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                     @Override
                                                                                                                     public void onSuccess(Void aVoid) {
-
+                                                                                                                        Navigation.findNavController(container).navigate(R.id.navigation_tracking);
                                                                                                                     }
                                                                                                                 })
                                                                                                                 .addOnFailureListener(new OnFailureListener() {
                                                                                                                     @Override
                                                                                                                     public void onFailure(@NonNull Exception e) {
                                                                                                                         Toast.makeText(getActivity(), "Failed to Proceed. Try again.", Toast.LENGTH_SHORT).show();
+                                                                                                                        buttonProceed.setEnabled(true);
                                                                                                                     }
                                                                                                                 });
                                                                                                     }
-
-                                                                                                    Navigation.findNavController(container).navigate(R.id.navigation_tracking);
-
                                                                                                 } else {
                                                                                                     Toast.makeText(getActivity(), "Failed to Proceed. Try again.", Toast.LENGTH_SHORT).show();
+                                                                                                    buttonProceed.setEnabled(true);
                                                                                                 }
                                                                                             }
                                                                                         });
-
                                                                                     }
                                                                                 })
                                                                                 .addOnFailureListener(new OnFailureListener() {
                                                                                     @Override
                                                                                     public void onFailure(@NonNull Exception e) {
                                                                                         Toast.makeText(getActivity(), "Failed to Proceed. Try again.", Toast.LENGTH_SHORT).show();
+                                                                                        buttonProceed.setEnabled(true);
                                                                                     }
                                                                                 });
                                                                     }
                                                                 } else {
                                                                     Toast.makeText(getActivity(), "Failed to Proceed. Try again.", Toast.LENGTH_SHORT).show();
+                                                                    buttonProceed.setEnabled(true);
                                                                 }
                                                             }
                                                         });
@@ -233,6 +235,7 @@ public class CartFragment extends Fragment {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 Toast.makeText(getActivity(), "Failed to Proceed. Try again.", Toast.LENGTH_SHORT).show();
+                                                buttonProceed.setEnabled(true);
                                             }
                                         });
                             }
@@ -241,6 +244,7 @@ public class CartFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.cancel();
+                                buttonProceed.setEnabled(true);
                             }
                         });
 
