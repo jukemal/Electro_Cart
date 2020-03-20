@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
+import com.electro.electro_cart.models.Question;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,6 +54,7 @@ import com.synnapps.carouselview.ImageListener;
 import android.view.ViewGroup.LayoutParams;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,6 +90,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             .document(firebaseAuth.getCurrentUser().getUid())
             .collection("favourites");
 
+    private final CollectionReference collectionReferenceQuestions;
+
     private final DocumentReference documentReferenceProduct;
 
     private static final int MAIN_LAYOUT = 0;
@@ -106,6 +110,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         this.navController = navController;
 
         documentReferenceProduct = collectionReferenceProduct.document(id);
+        collectionReferenceQuestions=documentReferenceProduct.collection("questions");
     }
 
     @NonNull
@@ -131,8 +136,11 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
             viewHolder = new SponsoredLayoutViewHolder(view);
         }
-//        else if (viewType == QUESTION_LAYOUT) {
-//        } else if (viewType == RANDOM_ITEM_LAYOUT) {
+        else if (viewType == QUESTION_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_question, parent, false);
+            viewHolder = new QuestionLayoutViewHolder(view);
+        }
+//        else if (viewType == RANDOM_ITEM_LAYOUT) {
 //        } else if (viewType == COMMENT_LAYOUT) { }
         else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
@@ -524,6 +532,33 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
+        }else if (holder.getItemViewType()==QUESTION_LAYOUT){
+            QuestionLayoutViewHolder questionLayoutViewHolder=(QuestionLayoutViewHolder)holder;
+
+            questionLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            questionLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+
+            collectionReferenceQuestions.get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            List<Question> questionList=new ArrayList<>();
+
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.e("Question", document.getId() + " => " + document.getData());
+
+                                    Question question=document.toObject(Question.class);
+                                    questionList.add(question);
+                                }
+
+                                QuestionRecyclerViewAdapter questionRecyclerViewAdapter=new QuestionRecyclerViewAdapter(context,questionList,id);
+                                questionLayoutViewHolder.recyclerView.setAdapter(questionRecyclerViewAdapter);
+                            } else {
+                                Log.e("Question", "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
         }else {
             SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
 
@@ -559,8 +594,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             return RECOMMENDED_LAYOUT;
         else if (position == 3)
             return SPONSORED_LAYOUT;
-//        else if (position == 4)
-//            return QUESTION_LAYOUT;
+        else if (position == 4)
+            return QUESTION_LAYOUT;
 //        else if (position == 5)
 //            return RANDOM_ITEM_LAYOUT;
 //        else if (position == 6)
@@ -664,6 +699,17 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             recyclerView = itemView.findViewById(R.id.recyclerview_home_row);
             textView = itemView.findViewById(R.id.recyclerview_home_row_title);
             button = itemView.findViewById(R.id.btnMore);
+        }
+    }
+
+    public class QuestionLayoutViewHolder extends RecyclerView.ViewHolder{
+
+        RecyclerView recyclerView;
+
+        public QuestionLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView=itemView.findViewById(R.id.recyclerview_question);
         }
     }
 }

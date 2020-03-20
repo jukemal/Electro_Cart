@@ -18,14 +18,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 
 import com.electro.electro_cart.SplashActivity;
+import com.electro.electro_cart.models.Answer;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
 import com.electro.electro_cart.models.Question;
 import com.electro.electro_cart.models.Rating;
 import com.electro.electro_cart.models.Specification;
 import com.electro.electro_cart.utils.EnumProductType;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.electro.electro_cart.R;
@@ -72,29 +75,48 @@ public class ProfileFragment extends Fragment {
 
         final CollectionReference collectionReference = db.collection("products");
 
-        final DocumentReference documentReferenceRating=db.collection("users").document("ibmpnjlrznRYPDCtfmGOBNoJy9H3");
+        final String ownerId=firebaseAuth.getCurrentUser().getUid();
 
         final List<Rating> ratings = new ArrayList<>();
 
-        final Rating rating = Rating.builder().header("Best of the best")
+        final Rating rating = Rating.builder()
+                .header("Best of the best")
                 .description("Brought this one last week. Totally happy with the result.")
                 .score(5)
-                .ownerName(documentReferenceRating)
+                .ownerId(ownerId)
                 .votes(12).build();
 
         ratings.add(rating);
 
-        final DocumentReference documentReferenceRating1=db.collection("users").document("tiHErBBLdWZXFSd4n4fdsgaPN113");
+        final List<Answer> answerList=new ArrayList<>();
+
+        Answer answer1=Answer.builder()
+                .answer("Yes")
+                .ownerId(ownerId).build();
+
+        answerList.add(answer1);
+
+        Answer answer2=Answer.builder()
+                .answer("No")
+                .ownerId(ownerId).build();
+
+        answerList.add(answer2);
 
         final List<Question> questions = new ArrayList<>();
 
-        final Question question = Question.builder().question("Does this have a sd card reader?")
-                .questionOwner(documentReferenceRating)
-                .answer("yes")
-                .answerOwner(documentReferenceRating1)
+        final Question question = Question.builder()
+                .question("Does this have a sd card reader?")
+                .ownerId(ownerId)
                 .votes(10).build();
 
         questions.add(question);
+
+        final Question question1 = Question.builder()
+                .question("Does this have a Camera?")
+                .ownerId(ownerId)
+                .votes(10).build();
+
+        questions.add(question1);
 
         Specification specification1 = Specification.builder().cpu("Intel Celeron N4000")
                 .gpu("Intel UHD Graphics 600")
@@ -150,7 +172,22 @@ public class ProfileFragment extends Fragment {
                                 }
 
                                 for (Question question1 : questions) {
-                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1);
+                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1)
+                                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                                            if (task.isSuccessful()){
+                                                for (Answer a:answerList){
+                                                    collectionReference.document(documentReference.getId())
+                                                            .collection("questions")
+                                                            .document(task.getResult().getId())
+                                                            .collection("answers").add(a);
+                                                }
+                                            }else {
+
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -218,8 +255,22 @@ public class ProfileFragment extends Fragment {
                                 }
 
                                 for (Question question1 : questions) {
-                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1);
-                                }
+                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1)
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                    if (task.isSuccessful()){
+                                                        for (Answer a:answerList){
+                                                            collectionReference.document(documentReference.getId())
+                                                                    .collection("questions")
+                                                                    .document(task.getResult().getId())
+                                                                    .collection("answers").add(a);
+                                                        }
+                                                    }else {
+
+                                                    }
+                                                }
+                                            });                                }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -285,8 +336,22 @@ public class ProfileFragment extends Fragment {
                                 }
 
                                 for (Question question1 : questions) {
-                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1);
-                                }
+                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1)
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                    if (task.isSuccessful()){
+                                                        for (Answer a:answerList){
+                                                            collectionReference.document(documentReference.getId())
+                                                                    .collection("questions")
+                                                                    .document(task.getResult().getId())
+                                                                    .collection("answers").add(a);
+                                                        }
+                                                    }else {
+
+                                                    }
+                                                }
+                                            });                                }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
