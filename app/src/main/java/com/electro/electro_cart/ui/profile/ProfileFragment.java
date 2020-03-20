@@ -131,7 +131,6 @@ public class ProfileFragment extends Fragment {
                 .image_link("gs://electro-cart-5c643.appspot.com/ASUS VivoBook E12 E203-3.png")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
                 .promotion(0)
-                .favourite(true)
                 .rating(5).build();
 
         Button button1 = root.findViewById(R.id.btnP1);
@@ -198,7 +197,6 @@ public class ProfileFragment extends Fragment {
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
                 .specification(specification2)
                 .promotion(160000)
-                .favourite(false)
                 .rating(4).build();
 
         Button button2=root.findViewById(R.id.btnP2);
@@ -268,7 +266,6 @@ public class ProfileFragment extends Fragment {
                 .image_link("gs://electro-cart-5c643.appspot.com/Samsung Galaxy S20 Ultra 5G-2.jpg")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
                 .promotion(145000)
-                .favourite(true)
                 .rating(3).build();
 
         Button button3=root.findViewById(R.id.btnP3);

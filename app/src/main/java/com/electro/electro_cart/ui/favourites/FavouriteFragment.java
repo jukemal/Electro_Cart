@@ -1,6 +1,7 @@
 package com.electro.electro_cart.ui.favourites;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,9 @@ import com.electro.electro_cart.models.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -39,7 +42,13 @@ public class FavouriteFragment extends Fragment {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private final CollectionReference collectionReference = db.collection("products");
+    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+    private final CollectionReference collectionReferenceProduct = db.collection("products");
+
+    private final CollectionReference collectionReferenceFavourite = db.collection("users")
+            .document(firebaseAuth.getCurrentUser().getUid())
+            .collection("favourites");
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -51,31 +60,71 @@ public class FavouriteFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
-        final List<Product> productList = new ArrayList<>();
-
-        collectionReference
-                .whereEqualTo("favourite",true)
+        collectionReferenceFavourite
+                .whereEqualTo("favourite", "true")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        final List<Product> productList = new ArrayList<>();
+
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot product : task.getResult()) {
-                                Product p = product.toObject(Product.class);
-                                productList.add(p);
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.e("Favourite Fragment", document.getId() + " => " + document.getData());
+
+                                collectionReferenceProduct.document(document.getId())
+                                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            if (document.exists()) {
+                                                Log.e("Favourite Fragment", "DocumentSnapshot data: " + document.getData());
+                                                Product product=document.toObject(Product.class);
+                                                productList.add(product);
+                                                productListRecycleViewAdapter.notifyDataSetChanged();
+                                            } else {
+                                                Log.e("Favourite Fragment", "No such document");
+                                            }
+                                        } else {
+                                            Log.e("Favourite Fragment", "get failed with ", task.getException());
+                                        }
+                                    }
+                                });
                             }
 
                             productListRecycleViewAdapter=new ProductListRecycleViewAdapter(getActivity(),productList);
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setAdapter(productListRecycleViewAdapter);
+                        } else {
+                            Log.e("Favourite Fragment", "Error getting documents: ", task.getException());
                         }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
-                    }
-        });
+                });
+
+//        collectionReference
+//                .whereEqualTo("favourite",true)
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot product : task.getResult()) {
+//                                Product p = product.toObject(Product.class);
+//                                productList.add(p);
+//                            }
+//
+//                            productListRecycleViewAdapter=new ProductListRecycleViewAdapter(getActivity(),productList);
+//                            progressBar.setVisibility(View.GONE);
+//                            recyclerView.setAdapter(productListRecycleViewAdapter);
+//                        }
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+//                    }
+//        });
 
         SwipeRefreshLayout swipeRefreshLayout=root.findViewById(R.id.swipe_refresh_favourite);
 
@@ -87,33 +136,48 @@ public class FavouriteFragment extends Fragment {
                 recyclerView.setAdapter(null);
                 recyclerView.setLayoutManager(null);
 
-                collectionReference
-                        .whereEqualTo("favourite",true)
+                collectionReferenceFavourite
+                        .whereEqualTo("favourite", "true")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                List<Product> refreshedProductList=new ArrayList<>();
+                                final List<Product> productList = new ArrayList<>();
 
                                 if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot product : task.getResult()) {
-                                        Product p = product.toObject(Product.class);
-                                        refreshedProductList.add(p);
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.e("Favourite Fragment", document.getId() + " => " + document.getData());
+
+                                        collectionReferenceProduct.document(document.getId())
+                                                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    DocumentSnapshot document = task.getResult();
+                                                    if (document.exists()) {
+                                                        Log.e("Favourite Fragment", "DocumentSnapshot data: " + document.getData());
+                                                        Product product=document.toObject(Product.class);
+                                                        productList.add(product);
+                                                    } else {
+                                                        Log.e("Favourite Fragment", "No such document");
+                                                    }
+                                                } else {
+                                                    Log.e("Favourite Fragment", "get failed with ", task.getException());
+                                                }
+                                            }
+                                        });
                                     }
 
                                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
-                                    productListRecycleViewAdapter=new ProductListRecycleViewAdapter(getActivity(),refreshedProductList);
+                                    productListRecycleViewAdapter=new ProductListRecycleViewAdapter(getActivity(),productList);
                                     recyclerView.setAdapter(productListRecycleViewAdapter);
                                     recyclerView.setVisibility(View.VISIBLE);
                                     swipeRefreshLayout.setRefreshing(false);
+                                } else {
+                                    Log.e("Favourite Fragment", "Error getting documents: ", task.getException());
                                 }
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
-                    }
-                });
+                        });
             }
         });
 

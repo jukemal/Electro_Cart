@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,6 +41,7 @@ import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -51,7 +53,9 @@ import android.view.ViewGroup.LayoutParams;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
@@ -76,6 +80,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private final CollectionReference collectionReferenceCart = db.collection("users")
             .document(firebaseAuth.getCurrentUser().getUid())
             .collection("cart");
+
+    private final CollectionReference collectionReferenceFavourite = db.collection("users")
+            .document(firebaseAuth.getCurrentUser().getUid())
+            .collection("favourites");
 
     private final DocumentReference documentReferenceProduct;
 
@@ -141,16 +149,91 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             mainLayoutViewHolder.textName.setText(product.getName());
 
-            final boolean isFavourite = product.isFavourite();
+            //------------------------------------------------------------------------------------------------------------
 
-            mainLayoutViewHolder.toggleButtonFavourite.setChecked(isFavourite);
+            //Favourite
+
+            Product finalProduct2 = product;
+            collectionReferenceFavourite.document(product.getId()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Log.e("Product Favourite", "DocumentSnapshot data: " + document.getData());
+
+                                    if (document.get("favourite").toString().equals("true")){
+                                        mainLayoutViewHolder.toggleButtonFavourite.setChecked(true);
+                                    }
+                                } else {
+                                    Log.e("Product Favourite", "No such document");
+                                    mainLayoutViewHolder.toggleButtonFavourite.setChecked(false);
+
+                                    Map<String, Object> map = new HashMap<>();
+                                    map.put("favourite", "false");
+
+                                    collectionReferenceFavourite.document(finalProduct2.getId()).set(map)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("Product Favourite", "DocumentSnapshot successfully written!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("Product Favourite", "Error writing document", e);
+                                                }
+                                            });
+
+                                }
+                            } else {
+                                Log.e("Product Favourite", "get failed with ", task.getException());
+                            }
+                        }
+                    });
+
+            Product finalProduct1 = product;
 
             mainLayoutViewHolder.toggleButtonFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    collectionReferenceProduct.document(id).update("favourite", isChecked);
+                    if (isChecked){
+                        collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite","true")
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.e("Product Favourite", "DocumentSnapshot successfully updated!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("Product Favourite", "Error updating document", e);
+                                    }
+                                });
+                    }else {
+                        collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite","false")
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.e("Product Favourite", "DocumentSnapshot successfully updated!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("Product Favourite", "Error updating document", e);
+                                    }
+                                });
+                    }
                 }
             });
+
+            //Favourite End
+            //------------------------------------------------------------------------------------------------------------
+
 
             ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
 
