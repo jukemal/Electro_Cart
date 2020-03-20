@@ -102,30 +102,6 @@ public class FavouriteFragment extends Fragment {
                     }
                 });
 
-//        collectionReference
-//                .whereEqualTo("favourite",true)
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot product : task.getResult()) {
-//                                Product p = product.toObject(Product.class);
-//                                productList.add(p);
-//                            }
-//
-//                            productListRecycleViewAdapter=new ProductListRecycleViewAdapter(getActivity(),productList);
-//                            progressBar.setVisibility(View.GONE);
-//                            recyclerView.setAdapter(productListRecycleViewAdapter);
-//                        }
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
-//                    }
-//        });
-
         SwipeRefreshLayout swipeRefreshLayout=root.findViewById(R.id.swipe_refresh_favourite);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -158,6 +134,7 @@ public class FavouriteFragment extends Fragment {
                                                         Log.e("Favourite Fragment", "DocumentSnapshot data: " + document.getData());
                                                         Product product=document.toObject(Product.class);
                                                         productList.add(product);
+                                                        productListRecycleViewAdapter.notifyDataSetChanged();
                                                     } else {
                                                         Log.e("Favourite Fragment", "No such document");
                                                     }

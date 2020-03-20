@@ -1,6 +1,7 @@
 package com.electro.electro_cart.ViewAdapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,13 +23,15 @@ import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    Context context;
-    List<Product> products;
+    private Context context;
+    private List<Product> products;
+    private NavController navController;
 
     private static final int SLIDER_LAYOUT = 0;
     private static final int DAILY_DEALS_LAYOUT = 1;
@@ -40,9 +44,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     int[] sliderImages = {R.drawable.image_slide_1, R.drawable.image_slide_2, R.drawable.image_slide_3, R.drawable.image_slide_4, R.drawable.image_slide_5};
 
-    public HomeRecyclerViewAdapter(Context context, List<Product> products) {
+    public HomeRecyclerViewAdapter(Context context, List<Product> products,NavController navController) {
         this.context = context;
         this.products = products;
+        this.navController=navController;
     }
 
     @NonNull
@@ -54,7 +59,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (viewType == SLIDER_LAYOUT) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.slider_layout, parent, false);
             viewHolder = new SliderViewHolder(view);
-        } else {
+        } else if (viewType==LAPTOP_PRODUCTS_LAYOUT){
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
+            viewHolder = new LaptopViewHolder(view);
+        }else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
             viewHolder = new PhoneViewHolder(view);
         }
@@ -82,7 +90,37 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     Toast.makeText(context, "Clicked item: " + position, Toast.LENGTH_SHORT).show();
                 }
             });
-        } else {
+        }else if (holder.getItemViewType()==LAPTOP_PRODUCTS_LAYOUT){
+            LaptopViewHolder laptopViewHolder=(LaptopViewHolder) holder;
+
+            laptopViewHolder.textView.setText("All Laptops");
+
+            List<Product> laptopList=new ArrayList<>();
+
+            for(Product product:products){
+                if (product.getProductType()== EnumProductType.LAPTOP){
+                    laptopList.add(product);
+                }
+            }
+
+            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter=new HomeRowRecycleViewAdapter(context,laptopList);
+
+            laptopViewHolder.recyclerView.setHasFixedSize(true);
+            laptopViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            laptopViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+            laptopViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, "All Laptops", Toast.LENGTH_SHORT).show();
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","All Laptops");
+                    bundle.putSerializable("productList", (Serializable) laptopList);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                }
+            });
+
+        }else {
                 PhoneViewHolder phoneViewHolder=(PhoneViewHolder)holder;
 
                 phoneViewHolder.textView.setText("All Phones");
@@ -105,6 +143,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     @Override
                     public void onClick(View view) {
                         Toast.makeText(context, "All Phones", Toast.LENGTH_SHORT).show();
+                        Bundle bundle=new Bundle();
+                        bundle.putString("header","All Phones");
+                        bundle.putSerializable("productList", (Serializable) phones);
+                        navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                     }
                 });
         }
@@ -145,6 +187,21 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             super(itemView);
 
             carouselView = itemView.findViewById(R.id.carouselView);
+        }
+    }
+
+    public class LaptopViewHolder extends RecyclerView.ViewHolder {
+
+        RecyclerView recyclerView;
+        TextView textView;
+        Button button;
+
+        public LaptopViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView = itemView.findViewById(R.id.recyclerview_home_row);
+            textView = itemView.findViewById(R.id.recyclerview_home_row_title);
+            button = itemView.findViewById(R.id.btnMore);
         }
     }
 
