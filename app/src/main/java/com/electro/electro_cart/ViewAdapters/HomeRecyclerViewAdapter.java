@@ -112,7 +112,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             laptopViewHolder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, "All Laptops", Toast.LENGTH_SHORT).show();
                     Bundle bundle=new Bundle();
                     bundle.putString("header","All Laptops");
                     bundle.putSerializable("productList", (Serializable) laptopList);

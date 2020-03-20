@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -51,12 +52,14 @@ import com.synnapps.carouselview.ImageListener;
 
 import android.view.ViewGroup.LayoutParams;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -92,15 +95,15 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int RECOMMENDED_LAYOUT = 2;
     private static final int SPONSORED_LAYOUT = 3;
     private static final int QUESTION_LAYOUT = 4;
-    private static final int BY_FEATURE_LAYOUT = 5;
+    private static final int RANDOM_ITEM_LAYOUT = 5;
     private static final int COMMENT_LAYOUT = 6;
 
-    public ProductRecycleViewAdapter(Context context, List<Product> products, String id, NavController navController,ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface) {
+    public ProductRecycleViewAdapter(Context context, List<Product> products, String id, NavController navController, ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface) {
         this.context = context;
         this.products = products;
         this.id = id;
         this.productRecycleViewAdapterClickInterface = productRecycleViewAdapterClickInterface;
-        this.navController=navController;
+        this.navController = navController;
 
         documentReferenceProduct = collectionReferenceProduct.document(id);
     }
@@ -115,9 +118,25 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_main, parent, false);
 
             viewHolder = new MainLayoutViewHolder(view);
-        } else {
+        }
+        else if (viewType == BOUGHT_TOGETHER_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_bought_together, parent, false);
+
+            viewHolder = new BoughtTogetherLayoutViewHolder(view);
+        }
+        else if (viewType == RECOMMENDED_LAYOUT) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
             viewHolder = new RecommendedLayoutViewHolder(view);
+        } else if (viewType == SPONSORED_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
+            viewHolder = new SponsoredLayoutViewHolder(view);
+        }
+//        else if (viewType == QUESTION_LAYOUT) {
+//        } else if (viewType == RANDOM_ITEM_LAYOUT) {
+//        } else if (viewType == COMMENT_LAYOUT) { }
+        else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
+            viewHolder = new SponsoredLayoutViewHolder(view);
         }
 
         return viewHolder;
@@ -125,17 +144,18 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder.getItemViewType() == MAIN_LAYOUT) {
-            Product product = null;
+        Product product = null;
 
-            for (Product p : products) {
-                if (p.getId().equals(id)) {
-                    product = p;
-                    break;
-                } else {
-                    product = products.get(0);
-                }
+        for (Product p : products) {
+            if (p.getId().equals(id)) {
+                product = p;
+                break;
+            } else {
+                product = products.get(0);
             }
+        }
+
+        if (holder.getItemViewType() == MAIN_LAYOUT) {
 
             final MainLayoutViewHolder mainLayoutViewHolder = (MainLayoutViewHolder) holder;
 
@@ -163,7 +183,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                                 if (document.exists()) {
                                     Log.e("Product Favourite", "DocumentSnapshot data: " + document.getData());
 
-                                    if (document.get("favourite").toString().equals("true")){
+                                    if (document.get("favourite").toString().equals("true")) {
                                         mainLayoutViewHolder.toggleButtonFavourite.setChecked(true);
                                     }
                                 } else {
@@ -199,8 +219,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             mainLayoutViewHolder.toggleButtonFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    if (isChecked){
-                        collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite","true")
+                    if (isChecked) {
+                        collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite", "true")
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -213,8 +233,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                                         Log.w("Product Favourite", "Error updating document", e);
                                     }
                                 });
-                    }else {
-                        collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite","false")
+                    } else {
+                        collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite", "false")
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -274,7 +294,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     popupView.setBackground(new ColorDrawable(Color.parseColor("#e2e2e2")));
                     popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
-                    ImageView imageViewImageProductCompare=popupView.findViewById(R.id.imageView_image_product_compare);
+                    ImageView imageViewImageProductCompare = popupView.findViewById(R.id.imageView_image_product_compare);
 
                     Glide.with(context)
                             .load(storage.getReferenceFromUrl(finalProduct.getImage_links().get(0)))
@@ -284,18 +304,18 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                             .fallback(R.drawable.error_loading)
                             .into(imageViewImageProductCompare);
 
-                    TextView textViewNameProductCompare=popupView.findViewById(R.id.product_name_product_compare);
+                    TextView textViewNameProductCompare = popupView.findViewById(R.id.product_name_product_compare);
 
                     textViewNameProductCompare.setText(finalProduct.getName());
 
-                    FloatingActionButton buttonSelectProduct=popupView.findViewById(R.id.floating_action_button_add_product_product_compare);
+                    FloatingActionButton buttonSelectProduct = popupView.findViewById(R.id.floating_action_button_add_product_product_compare);
 
                     buttonSelectProduct.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Bundle bundle=new Bundle();
-                            bundle.putString("id",finalProduct.getId());
-                            navController.navigate(R.id.action_to_navigation_select_product_product_compare,bundle);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("id", finalProduct.getId());
+                            navController.navigate(R.id.action_to_navigation_select_product_product_compare, bundle);
 
                             popupWindow.dismiss();
                         }
@@ -413,7 +433,54 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             //Product Features End
             //----------------------------------------------------------------------------------------------------------
 
-        } else {
+        }else if (holder.getItemViewType()==BOUGHT_TOGETHER_LAYOUT){
+            BoughtTogetherLayoutViewHolder boughtTogetherLayoutViewHolder=(BoughtTogetherLayoutViewHolder)holder;
+
+            Glide.with(context)
+                    .load(storage.getReferenceFromUrl(product.getImage_links().get(0)))
+                    .transition(withCrossFade())
+                    .fitCenter()
+                    .error(R.drawable.error_loading)
+                    .fallback(R.drawable.error_loading)
+                    .into(boughtTogetherLayoutViewHolder.imageView1);
+
+            boughtTogetherLayoutViewHolder.textViewName1.setText(product.getName());
+            boughtTogetherLayoutViewHolder.textViewPrice1.setText(String.valueOf(product.getPrice())+" LKR");
+
+            Product finalProduct3 = product;
+            boughtTogetherLayoutViewHolder.linearLayoutProduct1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("id", finalProduct3.getId());
+                    Navigation.findNavController(view).navigate(R.id.action_to_navigation_product,bundle);
+                }
+            });
+
+            Random random=new Random();
+            Product productRandom=products.get(random.nextInt(products.size()));
+
+            Glide.with(context)
+                    .load(storage.getReferenceFromUrl(productRandom.getImage_links().get(0)))
+                    .transition(withCrossFade())
+                    .fitCenter()
+                    .error(R.drawable.error_loading)
+                    .fallback(R.drawable.error_loading)
+                    .into(boughtTogetherLayoutViewHolder.imageView2);
+
+            boughtTogetherLayoutViewHolder.textViewName2.setText(productRandom.getName());
+            boughtTogetherLayoutViewHolder.textViewPrice2.setText(String.valueOf(productRandom.getPrice())+" LKR");
+
+            boughtTogetherLayoutViewHolder.linearLayoutProduct2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("id", productRandom.getId());
+                    Navigation.findNavController(view).navigate(R.id.action_to_navigation_product,bundle);
+                }
+            });
+
+        }else if (holder.getItemViewType()==RECOMMENDED_LAYOUT){
             RecommendedLayoutViewHolder recommendedLayoutViewHolder = (RecommendedLayoutViewHolder) holder;
 
             recommendedLayoutViewHolder.textView.setText("Recommended Products");
@@ -429,7 +496,54 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             recommendedLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, "Recommended Products", Toast.LENGTH_SHORT).show();
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","Recommended Products");
+                    bundle.putSerializable("productList", (Serializable) products);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                }
+            });
+        }else if(holder.getItemViewType()==SPONSORED_LAYOUT){
+            SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
+
+            sponsoredLayoutViewHolder.textView.setText("Sponsored Products");
+
+            Collections.shuffle(products);
+
+            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, products);
+
+            sponsoredLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            sponsoredLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            sponsoredLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+            sponsoredLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","Sponsored Products");
+                    bundle.putSerializable("productList", (Serializable) products);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                }
+            });
+        }else {
+            SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
+
+            sponsoredLayoutViewHolder.textView.setText("Sponsored Products");
+
+            Collections.shuffle(products);
+
+            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, products);
+
+            sponsoredLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            sponsoredLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            sponsoredLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+            sponsoredLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","Sponsored Products");
+                    bundle.putSerializable("productList", (Serializable) products);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
         }
@@ -439,7 +553,19 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     public int getItemViewType(int position) {
         if (position == 0)
             return MAIN_LAYOUT;
-        else return RECOMMENDED_LAYOUT;
+        else if (position == 1)
+            return BOUGHT_TOGETHER_LAYOUT;
+        else if (position == 2)
+            return RECOMMENDED_LAYOUT;
+        else if (position == 3)
+            return SPONSORED_LAYOUT;
+//        else if (position == 4)
+//            return QUESTION_LAYOUT;
+//        else if (position == 5)
+//            return RANDOM_ITEM_LAYOUT;
+//        else if (position == 6)
+//            return COMMENT_LAYOUT;
+        else return SPONSORED_LAYOUT;
     }
 
     @Override
@@ -484,6 +610,33 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    public class BoughtTogetherLayoutViewHolder extends RecyclerView.ViewHolder {
+
+        LinearLayout linearLayoutProduct1;
+        ImageView imageView1;
+        TextView textViewName1;
+        TextView textViewPrice1;
+
+        LinearLayout linearLayoutProduct2;
+        ImageView imageView2;
+        TextView textViewName2;
+        TextView textViewPrice2;
+
+        public BoughtTogetherLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            linearLayoutProduct1=itemView.findViewById(R.id.product1_bought_together);
+            imageView1 = itemView.findViewById(R.id.imageView_image1_bought_together);
+            textViewName1 = itemView.findViewById(R.id.product_name1_bought_together);
+            textViewPrice1 = itemView.findViewById(R.id.product_price1_bought_together);
+
+            linearLayoutProduct2=itemView.findViewById(R.id.product2_bought_together);
+            imageView2 = itemView.findViewById(R.id.imageView_image2_bought_together);
+            textViewName2 = itemView.findViewById(R.id.product_name2_bought_together);
+            textViewPrice2 = itemView.findViewById(R.id.product_price2_bought_together);
+        }
+    }
+
     public class RecommendedLayoutViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -491,6 +644,21 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         Button button;
 
         public RecommendedLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView = itemView.findViewById(R.id.recyclerview_home_row);
+            textView = itemView.findViewById(R.id.recyclerview_home_row_title);
+            button = itemView.findViewById(R.id.btnMore);
+        }
+    }
+
+    public class SponsoredLayoutViewHolder extends RecyclerView.ViewHolder {
+
+        RecyclerView recyclerView;
+        TextView textView;
+        Button button;
+
+        public SponsoredLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
 
             recyclerView = itemView.findViewById(R.id.recyclerview_home_row);
