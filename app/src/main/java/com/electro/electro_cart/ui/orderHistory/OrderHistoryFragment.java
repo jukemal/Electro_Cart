@@ -75,6 +75,7 @@ public class OrderHistoryFragment extends Fragment {
                             recyclerView.setAdapter(orderHistoryRecyclerViewAdapter);
                         }else {
                             progressBar.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
                         }
                     }

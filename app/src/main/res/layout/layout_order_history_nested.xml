@@ -38,6 +38,7 @@
             android:singleLine="false"
             android:textSize="14sp"
             android:text=""
+            android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toRightOf="@id/imgThumb_item_order_history_nested"
             app:layout_constraintRight_toRightOf="parent" />

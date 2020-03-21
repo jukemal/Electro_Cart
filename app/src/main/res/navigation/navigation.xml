@@ -159,5 +159,9 @@
         android:id="@+id/navigation_generic_product_ist"
         android:name="com.electro.electro_cart.ui.GenericProductListFragment"
         android:label="Products" />
+    <fragment
+        android:id="@+id/navigation_add_data"
+        android:name="com.electro.electro_cart.ui.AddDataFragment"
+        android:label="Add Data" />
 
 </navigation>
