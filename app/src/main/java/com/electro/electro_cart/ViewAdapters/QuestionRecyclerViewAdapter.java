@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -133,7 +134,7 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                                                             addQuestionLayoutViewHolder.textInputEditTextQuestion.setText("");
                                                             notifyDataSetChanged();
                                                         }else {
-
+                                                            Toast.makeText(context,"Error adding Question",Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 });
@@ -156,7 +157,7 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
             questionLayoutViewHolder.textViewQuestion.setText(question.getQuestion());
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-DD HH:mm");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm");
             String date = simpleDateFormat.format(question.getTimestamp());
 
             collectionReferenceUser.document(question.getOwnerId()).get()
@@ -266,7 +267,7 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                                                 public void onSuccess(Void aVoid) {
                                                     Log.e("Question Delete", "DocumentSnapshot successfully deleted!");
                                                     questionList.remove(position);
-                                                    notifyItemRemoved(position);
+                                                    notifyDataSetChanged();
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                         @Override

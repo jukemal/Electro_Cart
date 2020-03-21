@@ -145,7 +145,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             answerViewHolder.textViewAnswer.setText(answer.getAnswer());
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-DD HH:mm");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm");
             String date = simpleDateFormat.format(answer.getTimestamp());
 
             collectionReferenceUser.document(answer.getOwnerId()).get()

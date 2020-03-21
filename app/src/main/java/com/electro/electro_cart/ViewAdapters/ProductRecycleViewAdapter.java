@@ -34,6 +34,7 @@ import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
 import com.electro.electro_cart.models.Question;
+import com.electro.electro_cart.models.Rating;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -92,6 +93,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private final CollectionReference collectionReferenceQuestions;
 
+    private final CollectionReference collectionReferenceRatings;
+
     private final DocumentReference documentReferenceProduct;
 
     private static final int MAIN_LAYOUT = 0;
@@ -100,7 +103,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int SPONSORED_LAYOUT = 3;
     private static final int QUESTION_LAYOUT = 4;
     private static final int RANDOM_ITEM_LAYOUT = 5;
-    private static final int COMMENT_LAYOUT = 6;
+    private static final int RATING_LAYOUT = 6;
 
     public ProductRecycleViewAdapter(Context context, List<Product> products, String id, NavController navController, ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface) {
         this.context = context;
@@ -111,6 +114,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         documentReferenceProduct = collectionReferenceProduct.document(id);
         collectionReferenceQuestions=documentReferenceProduct.collection("questions");
+        collectionReferenceRatings=documentReferenceProduct.collection("ratings");
     }
 
     @NonNull
@@ -140,8 +144,14 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_question, parent, false);
             viewHolder = new QuestionLayoutViewHolder(view);
         }
-//        else if (viewType == RANDOM_ITEM_LAYOUT) {
-//        } else if (viewType == COMMENT_LAYOUT) { }
+        else if (viewType == RANDOM_ITEM_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
+            viewHolder = new RandomLayoutViewHolder(view);
+        }
+        else if (viewType == RATING_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_rating, parent, false);
+            viewHolder = new RatingLayoutViewHolder(view);
+        }
         else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
             viewHolder = new SponsoredLayoutViewHolder(view);
@@ -559,6 +569,55 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                             }
                         }
                     });
+        }else if (holder.getItemViewType()==RANDOM_ITEM_LAYOUT){
+            RandomLayoutViewHolder randomLayoutViewHolder = (RandomLayoutViewHolder) holder;
+
+            randomLayoutViewHolder.textView.setText("Random Products");
+
+            Collections.shuffle(products);
+
+            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, products);
+
+            randomLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            randomLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            randomLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+            randomLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","Sponsored Products");
+                    bundle.putSerializable("productList", (Serializable) products);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                }
+            });
+        }else if (holder.getItemViewType()==RATING_LAYOUT){
+            RatingLayoutViewHolder ratingLayoutViewHolder=(RatingLayoutViewHolder) holder;
+
+            ratingLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            ratingLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+
+            collectionReferenceRatings.get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            List<Rating> ratingList=new ArrayList<>();
+
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.e("Rating", document.getId() + " => " + document.getData());
+
+                                    Rating rating=document.toObject(Rating.class);
+                                    ratingList.add(rating);
+                                }
+
+                                RatingRecyclerViewAdapter questionRecyclerViewAdapter=new RatingRecyclerViewAdapter(context,ratingList,id);
+                                ratingLayoutViewHolder.recyclerView.setAdapter(questionRecyclerViewAdapter);
+                            } else {
+                                Log.e("Rating", "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
         }else {
             SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
 
@@ -596,10 +655,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             return SPONSORED_LAYOUT;
         else if (position == 4)
             return QUESTION_LAYOUT;
-//        else if (position == 5)
-//            return RANDOM_ITEM_LAYOUT;
-//        else if (position == 6)
-//            return COMMENT_LAYOUT;
+        else if (position == 5)
+            return RANDOM_ITEM_LAYOUT;
+        else if (position == 6)
+            return RATING_LAYOUT;
         else return SPONSORED_LAYOUT;
     }
 
@@ -710,6 +769,32 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             super(itemView);
 
             recyclerView=itemView.findViewById(R.id.recyclerview_question);
+        }
+    }
+
+    public class RandomLayoutViewHolder extends RecyclerView.ViewHolder {
+
+        RecyclerView recyclerView;
+        TextView textView;
+        Button button;
+
+        public RandomLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView = itemView.findViewById(R.id.recyclerview_home_row);
+            textView = itemView.findViewById(R.id.recyclerview_home_row_title);
+            button = itemView.findViewById(R.id.btnMore);
+        }
+    }
+
+    public class RatingLayoutViewHolder extends RecyclerView.ViewHolder {
+
+        RecyclerView recyclerView;
+
+        public RatingLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView = itemView.findViewById(R.id.recyclerview_rating);
         }
     }
 }
