@@ -1,6 +1,7 @@
 package com.electro.electro_cart.ui.orderHistory;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,8 @@ public class OrderHistoryFragment extends Fragment {
                             orderHistoryRecyclerViewAdapter=new OrderHistoryRecyclerViewAdapter(getContext(),orderHistoryList);
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setAdapter(orderHistoryRecyclerViewAdapter);
+
+                            Log.e("History",orderHistoryList.toString());
                         }else {
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setVisibility(View.GONE);

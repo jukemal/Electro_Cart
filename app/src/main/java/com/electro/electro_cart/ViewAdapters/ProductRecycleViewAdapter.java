@@ -283,7 +283,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 @Override
                 public void onClick(View view) {
                     Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
-                    sceneViewerIntent.setData(Uri.parse("https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
+                    sceneViewerIntent.setData(Uri.parse("https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf?mode=ar_only"));
                     sceneViewerIntent.setPackage("com.google.ar.core");
                     context.startActivity(sceneViewerIntent);
                 }

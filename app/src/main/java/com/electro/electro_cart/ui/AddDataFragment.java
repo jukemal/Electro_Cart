@@ -46,21 +46,7 @@ public class AddDataFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragmant_add_data, container, false);
 
-        final TextView textView = root.findViewById(R.id.text_profile);
-
         firebaseAuth = FirebaseAuth.getInstance();
-
-        Button button = root.findViewById(R.id.btnLogout);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                firebaseAuth.signOut();
-                Intent intent = new Intent(getActivity(), SplashActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -132,7 +118,7 @@ public class AddDataFragment extends Fragment {
                 .feature("Optical drive ")
                 .feature("Security Lock slot").build();
 
-        final Product product1 = Product.builder().name("ASUS VivoBook E12 E203 new")
+        final Product product1 = Product.builder().name("ASUS VivoBook E12 E203")
                 .price(45000)
                 .productType(EnumProductType.LAPTOP)
                 .available_store("singer")
@@ -354,31 +340,239 @@ public class AddDataFragment extends Fragment {
             }
         });
 
-        CollectionReference collectionReferenceUser=db.collection("users");
+        Specification specification4=Specification.builder()
+                .cpu("Intel Core i5-7360U")
+                .gpu("Intel Iris Plus Graphics 640")
+                .display("13.3”, WQXGA (2560 x 1600), IPS")
+                .memory("128GB SSD")
+                .ram("8GB, LPDDR3, 2133MHz")
+                .os("Mac OS X")
+                .battery("54.5Wh, Li-Po")
+                .material("Aluminum")
+                .dimensions("304 x 212 x 14.9 mm (11.97\" x 8.35\" x 0.59\")")
+                .weight(" 1.37 kg (3 lbs)")
+                .port("4x USB Type-C 3.1 (3.1 Gen 2)")
+                .port("Thunderbolt 3")
+                .port("Wi-Fi 802.11ac")
+                .port("Bluetooth 4.2")
+                .port("Audio jack headphone/microphone")
+                .feature("Web camera")
+                .feature("Microphone")
+                .feature("Speakers").build();
+
+        final Product product4=Product.builder()
+                .name("Apple MacBook Pro 13 (Mid-2017)")
+                .price(350000)
+                .productType(EnumProductType.LAPTOP)
+                .available_store("metropolitan")
+                .available_store("abans")
+                .description(null)
+                .image_link("gs://electro-cart-5c643.appspot.com/Apple MacBook Pro 13 (Mid-2017)-1.jpg")
+                .image_link("gs://electro-cart-5c643.appspot.com/Apple MacBook Pro 13 (Mid-2017)-2.jpg")
+                .image_link("gs://electro-cart-5c643.appspot.com/Apple MacBook Pro 13 (Mid-2017)-3.jpg")
+                .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
+                .specification(specification4)
+                .build();
 
         Button button4=root.findViewById(R.id.btnP4);
 
         button4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DocumentReference documentReferenceP1=db.collection("products").document("Bz2oLC5lhZLQFlc2oS17");
-
-                CartItem cartItem=CartItem.builder()
-                        .ProductID("Bz2oLC5lhZLQFlc2oS17")
-                        .productReference(documentReferenceP1)
-                        .itemCount(2).build();
-
-                collectionReferenceUser
-                        .document(firebaseAuth.getCurrentUser().getUid())
-                        .collection("cart")
-                        .document("Bz2oLC5lhZLQFlc2oS17")
-                        .set(cartItem)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                collectionReference.add(product4)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.e("pro", "jttrjt");
+                            public void onSuccess(DocumentReference documentReference) {
+                                Toast.makeText(getContext(), "Successful", Toast.LENGTH_SHORT).show();
+                                Log.e("pro", documentReference.getId());
+
+                                for (Rating rating1 : ratings) {
+                                    collectionReference.document(documentReference.getId()).collection("ratings").add(rating1);
+                                }
+
+                                for (Question question1 : questions) {
+                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1)
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                    if (task.isSuccessful()){
+                                                        for (Answer a:answerList){
+                                                            collectionReference.document(documentReference.getId())
+                                                                    .collection("questions")
+                                                                    .document(task.getResult().getId())
+                                                                    .collection("answers").add(a);
+                                                        }
+                                                    }else {
+
+                                                    }
+                                                }
+                                            });                                }
                             }
-                        });
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
+                        Log.e("pro", e.toString());
+                    }
+                });
+            }
+        });
+
+        Specification specification5=Specification.builder()
+                .cpu("Qualcomm SDM730 Snapdragon 730")
+                .gpu("Adreno 618")
+                .display("IPS LCD 5.81'' 1080 x 2340 pixels, 19.5:9 ratio")
+                .memory("64GB")
+                .ram("6GB")
+                .os("Android 11.0")
+                .battery("Non-removable Li-Po 4500 mAh")
+                .material("Glass front (Asahi Dragontrail), plastic back, plastic frame")
+                .dimensions("151.3 x 70.1 x 8.2 mm (5.96 x 2.76 x 0.32 in)")
+                .weight("147 g (5.19 oz)")
+                .port("GSM / CDMA / HSPA / EVDO / LTE")
+                .port("eSIM")
+                .port("Wi-Fi 802.11 a/b/g/n/ac")
+                .port("Bluetooth 5.0")
+                .port("GPS")
+                .port("USB Type-C")
+                .feature("12.2MP Main Camera")
+                .feature("8MP Selfie Camera")
+                .feature("Fast charging 45W")
+                .feature("Fingerprint (under display, ultrasonic)").build();
+
+        Product product5=Product.builder()
+                .name("Google Pixel 4a")
+                .price(135000)
+                .productType(EnumProductType.PHONE)
+                .available_store("singer")
+                .available_store("abans")
+                .description(null)
+                .image_link("gs://electro-cart-5c643.appspot.com/Google Pixel 4a-1jpg.jpg")
+                .image_link("gs://electro-cart-5c643.appspot.com/Google Pixel 4a-2.jpg")
+                .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
+                .specification(specification5)
+                .build();
+
+        Button button5=root.findViewById(R.id.btnP5);
+
+        button5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                collectionReference.add(product5)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Toast.makeText(getContext(), "Successful", Toast.LENGTH_SHORT).show();
+                                Log.e("pro", documentReference.getId());
+
+                                for (Rating rating1 : ratings) {
+                                    collectionReference.document(documentReference.getId()).collection("ratings").add(rating1);
+                                }
+
+                                for (Question question1 : questions) {
+                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1)
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                    if (task.isSuccessful()){
+                                                        for (Answer a:answerList){
+                                                            collectionReference.document(documentReference.getId())
+                                                                    .collection("questions")
+                                                                    .document(task.getResult().getId())
+                                                                    .collection("answers").add(a);
+                                                        }
+                                                    }else {
+
+                                                    }
+                                                }
+                                            });                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
+                        Log.e("pro", e.toString());
+                    }
+                });
+            }
+        });
+
+
+        Specification specification6=Specification.builder()
+                .cpu("Qualcomm SDM730 Snapdragon 730")
+                .gpu("Adreno 618")
+                .display("IPS LCD 5.81'' 1080 x 2340 pixels, 19.5:9 ratio")
+                .memory("64GB")
+                .ram("6GB")
+                .os("Android 11.0")
+                .battery("Non-removable Li-Po 4500 mAh")
+                .material("Glass front (Asahi Dragontrail), plastic back, plastic frame")
+                .dimensions("151.3 x 70.1 x 8.2 mm (5.96 x 2.76 x 0.32 in)")
+                .weight("147 g (5.19 oz)")
+                .port("GSM / CDMA / HSPA / EVDO / LTE")
+                .port("eSIM")
+                .port("Wi-Fi 802.11 a/b/g/n/ac")
+                .port("Bluetooth 5.0")
+                .port("GPS")
+                .port("USB Type-C")
+                .feature("12.2MP Main Camera")
+                .feature("8MP Selfie Camera")
+                .feature("Fast charging 45W")
+                .feature("Fingerprint (under display, ultrasonic)").build();
+
+        Product product6=Product.builder()
+                .specification(specification6)
+                .name("Xiaomi Redmi Note 9 Pro")
+                .price(75000)
+                .productType(EnumProductType.PHONE)
+                .available_store("singer")
+                .available_store("metropolitan")
+                .description(null)
+                .image_link("gs://electro-cart-5c643.appspot.com/Xiaomi Redmi Note 9 Pro-1.jpg")
+                .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
+                .build();
+
+        Button button6=root.findViewById(R.id.btnP6);
+
+        button6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                collectionReference.add(product6)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Toast.makeText(getContext(), "Successful", Toast.LENGTH_SHORT).show();
+                                Log.e("pro", documentReference.getId());
+
+                                for (Rating rating1 : ratings) {
+                                    collectionReference.document(documentReference.getId()).collection("ratings").add(rating1);
+                                }
+
+                                for (Question question1 : questions) {
+                                    collectionReference.document(documentReference.getId()).collection("questions").add(question1)
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                    if (task.isSuccessful()){
+                                                        for (Answer a:answerList){
+                                                            collectionReference.document(documentReference.getId())
+                                                                    .collection("questions")
+                                                                    .document(task.getResult().getId())
+                                                                    .collection("answers").add(a);
+                                                        }
+                                                    }else {
+
+                                                    }
+                                                }
+                                            });                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
+                        Log.e("pro", e.toString());
+                    }
+                });
             }
         });
 

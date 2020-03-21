@@ -11,7 +11,10 @@ buildscript {
         
         classpath 'com.google.gms:google-services:4.3.3'
 
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.0-alpha03"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.0-alpha04"
+
+        classpath 'com.google.ar.sceneform:plugin:1.15.0'
+
     }
 }
 
