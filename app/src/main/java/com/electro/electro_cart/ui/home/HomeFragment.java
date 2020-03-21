@@ -75,6 +75,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
             }
         });
 
@@ -111,6 +113,8 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
                     }
                 });
             }

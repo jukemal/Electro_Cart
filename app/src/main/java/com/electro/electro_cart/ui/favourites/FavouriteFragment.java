@@ -98,6 +98,8 @@ public class FavouriteFragment extends Fragment {
                             recyclerView.setAdapter(productListRecycleViewAdapter);
                         } else {
                             Log.e("Favourite Fragment", "Error getting documents: ", task.getException());
+                            progressBar.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.GONE);
                         }
                     }
                 });
