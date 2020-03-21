@@ -21,16 +21,7 @@ public class ContactUsFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_contact_us, container, false);
 
-        final TextView textView = root.findViewById(R.id.text_home);
 
-        ContactUsViewModel contactUsViewModel=new ViewModelProvider(requireActivity()).get(ContactUsViewModel.class);
-
-        contactUsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
         return root;
     }
 }
