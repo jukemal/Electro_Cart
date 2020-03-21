@@ -19,16 +19,7 @@ public class AboutUsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_about_us, container, false);
 
-        final TextView textView = root.findViewById(R.id.text_home);
 
-        AboutUsViewModel aboutUsViewModel=new ViewModelProvider(requireActivity()).get(AboutUsViewModel.class);
-
-        aboutUsViewModel.getText().observe(requireActivity(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
         return root;
     }
 }
