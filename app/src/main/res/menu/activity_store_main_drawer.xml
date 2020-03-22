@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_store_review"
+            android:icon="@drawable/ic_rate_review_black_24dp"
+            android:title="Reviews" />
+        <item
+            android:id="@+id/navigation_store_transaction_history"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="Transaction History" />
+
+        <item
+            android:id="@+id/navigation_store_visits"
+            android:icon="@drawable/ic_supervisor_account_black_24dp"
+            android:title="Store Visits" />
+        <item
+            android:id="@+id/navigation_store_revenue"
+            android:icon="@drawable/ic_payment_black_24dp"
+            android:title="Store Revenue" />
+        <item
+            android:id="@+id/navigation_store_rating"
+            android:icon="@drawable/ic_star_black_24dp"
+            android:title="Ratings" />
+        <item
+            android:id="@+id/navigation_store_contact_us"
+            android:icon="@drawable/ic_contacts_black_24dp"
+            android:title="Contact Us" />
+        <item
+            android:id="@+id/navigation_store_about_us"
+            android:icon="@drawable/ic_about_us_black_24dp"
+            android:title="About Us" />
+    </group>
+</menu>

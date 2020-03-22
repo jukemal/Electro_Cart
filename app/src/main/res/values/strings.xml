@@ -4,6 +4,7 @@
     <string name="title_activity_intro_slide">IntroSlideActivity</string>
     <string name="title_activity_login_activity">LoginActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_store_main">StoreMainActivity</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="next">NEXT</string>
