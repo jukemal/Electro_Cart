@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -31,6 +33,8 @@ import com.bumptech.glide.Glide;
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
+import com.electro.electro_cart.models.Question;
+import com.electro.electro_cart.models.Rating;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,6 +44,7 @@ import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -49,10 +54,15 @@ import com.synnapps.carouselview.ImageListener;
 
 import android.view.ViewGroup.LayoutParams;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -77,6 +87,14 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             .document(firebaseAuth.getCurrentUser().getUid())
             .collection("cart");
 
+    private final CollectionReference collectionReferenceFavourite = db.collection("users")
+            .document(firebaseAuth.getCurrentUser().getUid())
+            .collection("favourites");
+
+    private final CollectionReference collectionReferenceQuestions;
+
+    private final CollectionReference collectionReferenceRatings;
+
     private final DocumentReference documentReferenceProduct;
 
     private static final int MAIN_LAYOUT = 0;
@@ -84,17 +102,19 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int RECOMMENDED_LAYOUT = 2;
     private static final int SPONSORED_LAYOUT = 3;
     private static final int QUESTION_LAYOUT = 4;
-    private static final int BY_FEATURE_LAYOUT = 5;
-    private static final int COMMENT_LAYOUT = 6;
+    private static final int RANDOM_ITEM_LAYOUT = 5;
+    private static final int RATING_LAYOUT = 6;
 
-    public ProductRecycleViewAdapter(Context context, List<Product> products, String id, NavController navController,ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface) {
+    public ProductRecycleViewAdapter(Context context, List<Product> products, String id, NavController navController, ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface) {
         this.context = context;
         this.products = products;
         this.id = id;
         this.productRecycleViewAdapterClickInterface = productRecycleViewAdapterClickInterface;
-        this.navController=navController;
+        this.navController = navController;
 
         documentReferenceProduct = collectionReferenceProduct.document(id);
+        collectionReferenceQuestions=documentReferenceProduct.collection("questions");
+        collectionReferenceRatings=documentReferenceProduct.collection("ratings");
     }
 
     @NonNull
@@ -107,9 +127,34 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_main, parent, false);
 
             viewHolder = new MainLayoutViewHolder(view);
-        } else {
+        }
+        else if (viewType == BOUGHT_TOGETHER_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_product_bought_together, parent, false);
+
+            viewHolder = new BoughtTogetherLayoutViewHolder(view);
+        }
+        else if (viewType == RECOMMENDED_LAYOUT) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
             viewHolder = new RecommendedLayoutViewHolder(view);
+        } else if (viewType == SPONSORED_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
+            viewHolder = new SponsoredLayoutViewHolder(view);
+        }
+        else if (viewType == QUESTION_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_question, parent, false);
+            viewHolder = new QuestionLayoutViewHolder(view);
+        }
+        else if (viewType == RANDOM_ITEM_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
+            viewHolder = new RandomLayoutViewHolder(view);
+        }
+        else if (viewType == RATING_LAYOUT) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_rating, parent, false);
+            viewHolder = new RatingLayoutViewHolder(view);
+        }
+        else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product_recyclerview_row, parent, false);
+            viewHolder = new SponsoredLayoutViewHolder(view);
         }
 
         return viewHolder;
@@ -117,17 +162,18 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder.getItemViewType() == MAIN_LAYOUT) {
-            Product product = null;
+        Product product = null;
 
-            for (Product p : products) {
-                if (p.getId().equals(id)) {
-                    product = p;
-                    break;
-                } else {
-                    product = products.get(0);
-                }
+        for (Product p : products) {
+            if (p.getId().equals(id)) {
+                product = p;
+                break;
+            } else {
+                product = products.get(0);
             }
+        }
+
+        if (holder.getItemViewType() == MAIN_LAYOUT) {
 
             final MainLayoutViewHolder mainLayoutViewHolder = (MainLayoutViewHolder) holder;
 
@@ -141,16 +187,91 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             mainLayoutViewHolder.textName.setText(product.getName());
 
-            final boolean isFavourite = product.isFavourite();
+            //------------------------------------------------------------------------------------------------------------
 
-            mainLayoutViewHolder.toggleButtonFavourite.setChecked(isFavourite);
+            //Favourite
+
+            Product finalProduct2 = product;
+            collectionReferenceFavourite.document(product.getId()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Log.e("Product Favourite", "DocumentSnapshot data: " + document.getData());
+
+                                    if (document.get("favourite").toString().equals("true")) {
+                                        mainLayoutViewHolder.toggleButtonFavourite.setChecked(true);
+                                    }
+                                } else {
+                                    Log.e("Product Favourite", "No such document");
+                                    mainLayoutViewHolder.toggleButtonFavourite.setChecked(false);
+
+                                    Map<String, Object> map = new HashMap<>();
+                                    map.put("favourite", "false");
+
+                                    collectionReferenceFavourite.document(finalProduct2.getId()).set(map)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("Product Favourite", "DocumentSnapshot successfully written!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("Product Favourite", "Error writing document", e);
+                                                }
+                                            });
+
+                                }
+                            } else {
+                                Log.e("Product Favourite", "get failed with ", task.getException());
+                            }
+                        }
+                    });
+
+            Product finalProduct1 = product;
 
             mainLayoutViewHolder.toggleButtonFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    collectionReferenceProduct.document(id).update("favourite", isChecked);
+                    if (isChecked) {
+                        collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite", "true")
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.e("Product Favourite", "DocumentSnapshot successfully updated!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("Product Favourite", "Error updating document", e);
+                                    }
+                                });
+                    } else {
+                        collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite", "false")
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.e("Product Favourite", "DocumentSnapshot successfully updated!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("Product Favourite", "Error updating document", e);
+                                    }
+                                });
+                    }
                 }
             });
+
+            //Favourite End
+            //------------------------------------------------------------------------------------------------------------
+
 
             ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
 
@@ -191,7 +312,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     popupView.setBackground(new ColorDrawable(Color.parseColor("#e2e2e2")));
                     popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
-                    ImageView imageViewImageProductCompare=popupView.findViewById(R.id.imageView_image_product_compare);
+                    ImageView imageViewImageProductCompare = popupView.findViewById(R.id.imageView_image_product_compare);
 
                     Glide.with(context)
                             .load(storage.getReferenceFromUrl(finalProduct.getImage_links().get(0)))
@@ -201,18 +322,18 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                             .fallback(R.drawable.error_loading)
                             .into(imageViewImageProductCompare);
 
-                    TextView textViewNameProductCompare=popupView.findViewById(R.id.product_name_product_compare);
+                    TextView textViewNameProductCompare = popupView.findViewById(R.id.product_name_product_compare);
 
                     textViewNameProductCompare.setText(finalProduct.getName());
 
-                    FloatingActionButton buttonSelectProduct=popupView.findViewById(R.id.floating_action_button_add_product_product_compare);
+                    FloatingActionButton buttonSelectProduct = popupView.findViewById(R.id.floating_action_button_add_product_product_compare);
 
                     buttonSelectProduct.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Bundle bundle=new Bundle();
-                            bundle.putString("id",finalProduct.getId());
-                            navController.navigate(R.id.action_to_navigation_select_product_product_compare,bundle);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("id", finalProduct.getId());
+                            navController.navigate(R.id.action_to_navigation_select_product_product_compare, bundle);
 
                             popupWindow.dismiss();
                         }
@@ -330,7 +451,54 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             //Product Features End
             //----------------------------------------------------------------------------------------------------------
 
-        } else {
+        }else if (holder.getItemViewType()==BOUGHT_TOGETHER_LAYOUT){
+            BoughtTogetherLayoutViewHolder boughtTogetherLayoutViewHolder=(BoughtTogetherLayoutViewHolder)holder;
+
+            Glide.with(context)
+                    .load(storage.getReferenceFromUrl(product.getImage_links().get(0)))
+                    .transition(withCrossFade())
+                    .fitCenter()
+                    .error(R.drawable.error_loading)
+                    .fallback(R.drawable.error_loading)
+                    .into(boughtTogetherLayoutViewHolder.imageView1);
+
+            boughtTogetherLayoutViewHolder.textViewName1.setText(product.getName());
+            boughtTogetherLayoutViewHolder.textViewPrice1.setText(String.valueOf(product.getPrice())+" LKR");
+
+            Product finalProduct3 = product;
+            boughtTogetherLayoutViewHolder.linearLayoutProduct1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("id", finalProduct3.getId());
+                    Navigation.findNavController(view).navigate(R.id.action_to_navigation_product,bundle);
+                }
+            });
+
+            Random random=new Random();
+            Product productRandom=products.get(random.nextInt(products.size()));
+
+            Glide.with(context)
+                    .load(storage.getReferenceFromUrl(productRandom.getImage_links().get(0)))
+                    .transition(withCrossFade())
+                    .fitCenter()
+                    .error(R.drawable.error_loading)
+                    .fallback(R.drawable.error_loading)
+                    .into(boughtTogetherLayoutViewHolder.imageView2);
+
+            boughtTogetherLayoutViewHolder.textViewName2.setText(productRandom.getName());
+            boughtTogetherLayoutViewHolder.textViewPrice2.setText(String.valueOf(productRandom.getPrice())+" LKR");
+
+            boughtTogetherLayoutViewHolder.linearLayoutProduct2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("id", productRandom.getId());
+                    Navigation.findNavController(view).navigate(R.id.action_to_navigation_product,bundle);
+                }
+            });
+
+        }else if (holder.getItemViewType()==RECOMMENDED_LAYOUT){
             RecommendedLayoutViewHolder recommendedLayoutViewHolder = (RecommendedLayoutViewHolder) holder;
 
             recommendedLayoutViewHolder.textView.setText("Recommended Products");
@@ -346,7 +514,130 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             recommendedLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context, "Recommended Products", Toast.LENGTH_SHORT).show();
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","Recommended Products");
+                    bundle.putSerializable("productList", (Serializable) products);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                }
+            });
+        }else if(holder.getItemViewType()==SPONSORED_LAYOUT){
+            SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
+
+            sponsoredLayoutViewHolder.textView.setText("Sponsored Products");
+
+            Collections.shuffle(products);
+
+            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, products);
+
+            sponsoredLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            sponsoredLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            sponsoredLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+            sponsoredLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","Sponsored Products");
+                    bundle.putSerializable("productList", (Serializable) products);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                }
+            });
+        }else if (holder.getItemViewType()==QUESTION_LAYOUT){
+            QuestionLayoutViewHolder questionLayoutViewHolder=(QuestionLayoutViewHolder)holder;
+
+            questionLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            questionLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+
+            collectionReferenceQuestions.get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            List<Question> questionList=new ArrayList<>();
+
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.e("Question", document.getId() + " => " + document.getData());
+
+                                    Question question=document.toObject(Question.class);
+                                    questionList.add(question);
+                                }
+
+                                QuestionRecyclerViewAdapter questionRecyclerViewAdapter=new QuestionRecyclerViewAdapter(context,questionList,id);
+                                questionLayoutViewHolder.recyclerView.setAdapter(questionRecyclerViewAdapter);
+                            } else {
+                                Log.e("Question", "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+        }else if (holder.getItemViewType()==RANDOM_ITEM_LAYOUT){
+            RandomLayoutViewHolder randomLayoutViewHolder = (RandomLayoutViewHolder) holder;
+
+            randomLayoutViewHolder.textView.setText("Random Products");
+
+            Collections.shuffle(products);
+
+            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, products);
+
+            randomLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            randomLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            randomLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+            randomLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","Sponsored Products");
+                    bundle.putSerializable("productList", (Serializable) products);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                }
+            });
+        }else if (holder.getItemViewType()==RATING_LAYOUT){
+            RatingLayoutViewHolder ratingLayoutViewHolder=(RatingLayoutViewHolder) holder;
+
+            ratingLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            ratingLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+
+            collectionReferenceRatings.get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            List<Rating> ratingList=new ArrayList<>();
+
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.e("Rating", document.getId() + " => " + document.getData());
+
+                                    Rating rating=document.toObject(Rating.class);
+                                    ratingList.add(rating);
+                                }
+
+                                RatingRecyclerViewAdapter questionRecyclerViewAdapter=new RatingRecyclerViewAdapter(context,ratingList,id);
+                                ratingLayoutViewHolder.recyclerView.setAdapter(questionRecyclerViewAdapter);
+                            } else {
+                                Log.e("Rating", "Error getting documents: ", task.getException());
+                            }
+                        }
+                    });
+        }else {
+            SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
+
+            sponsoredLayoutViewHolder.textView.setText("Sponsored Products");
+
+            Collections.shuffle(products);
+
+            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, products);
+
+            sponsoredLayoutViewHolder.recyclerView.setHasFixedSize(true);
+            sponsoredLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            sponsoredLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+            sponsoredLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle=new Bundle();
+                    bundle.putString("header","Sponsored Products");
+                    bundle.putSerializable("productList", (Serializable) products);
+                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
         }
@@ -356,7 +647,19 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     public int getItemViewType(int position) {
         if (position == 0)
             return MAIN_LAYOUT;
-        else return RECOMMENDED_LAYOUT;
+        else if (position == 1)
+            return BOUGHT_TOGETHER_LAYOUT;
+        else if (position == 2)
+            return RECOMMENDED_LAYOUT;
+        else if (position == 3)
+            return SPONSORED_LAYOUT;
+        else if (position == 4)
+            return QUESTION_LAYOUT;
+        else if (position == 5)
+            return RANDOM_ITEM_LAYOUT;
+        else if (position == 6)
+            return RATING_LAYOUT;
+        else return SPONSORED_LAYOUT;
     }
 
     @Override
@@ -401,6 +704,33 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    public class BoughtTogetherLayoutViewHolder extends RecyclerView.ViewHolder {
+
+        LinearLayout linearLayoutProduct1;
+        ImageView imageView1;
+        TextView textViewName1;
+        TextView textViewPrice1;
+
+        LinearLayout linearLayoutProduct2;
+        ImageView imageView2;
+        TextView textViewName2;
+        TextView textViewPrice2;
+
+        public BoughtTogetherLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            linearLayoutProduct1=itemView.findViewById(R.id.product1_bought_together);
+            imageView1 = itemView.findViewById(R.id.imageView_image1_bought_together);
+            textViewName1 = itemView.findViewById(R.id.product_name1_bought_together);
+            textViewPrice1 = itemView.findViewById(R.id.product_price1_bought_together);
+
+            linearLayoutProduct2=itemView.findViewById(R.id.product2_bought_together);
+            imageView2 = itemView.findViewById(R.id.imageView_image2_bought_together);
+            textViewName2 = itemView.findViewById(R.id.product_name2_bought_together);
+            textViewPrice2 = itemView.findViewById(R.id.product_price2_bought_together);
+        }
+    }
+
     public class RecommendedLayoutViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -413,6 +743,58 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             recyclerView = itemView.findViewById(R.id.recyclerview_home_row);
             textView = itemView.findViewById(R.id.recyclerview_home_row_title);
             button = itemView.findViewById(R.id.btnMore);
+        }
+    }
+
+    public class SponsoredLayoutViewHolder extends RecyclerView.ViewHolder {
+
+        RecyclerView recyclerView;
+        TextView textView;
+        Button button;
+
+        public SponsoredLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView = itemView.findViewById(R.id.recyclerview_home_row);
+            textView = itemView.findViewById(R.id.recyclerview_home_row_title);
+            button = itemView.findViewById(R.id.btnMore);
+        }
+    }
+
+    public class QuestionLayoutViewHolder extends RecyclerView.ViewHolder{
+
+        RecyclerView recyclerView;
+
+        public QuestionLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView=itemView.findViewById(R.id.recyclerview_question);
+        }
+    }
+
+    public class RandomLayoutViewHolder extends RecyclerView.ViewHolder {
+
+        RecyclerView recyclerView;
+        TextView textView;
+        Button button;
+
+        public RandomLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView = itemView.findViewById(R.id.recyclerview_home_row);
+            textView = itemView.findViewById(R.id.recyclerview_home_row_title);
+            button = itemView.findViewById(R.id.btnMore);
+        }
+    }
+
+    public class RatingLayoutViewHolder extends RecyclerView.ViewHolder {
+
+        RecyclerView recyclerView;
+
+        public RatingLayoutViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            recyclerView = itemView.findViewById(R.id.recyclerview_rating);
         }
     }
 }

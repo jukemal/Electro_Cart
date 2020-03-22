@@ -6,27 +6,23 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-
 import lombok.Builder;
 
 @Builder
-public class Question implements Serializable {
+public class Answer implements Serializable {
     private @DocumentId String id;
-    private String question;
+    private String answer;
     private String ownerId;
     private @ServerTimestamp Date timestamp;
-    private int votes;
 
-    public Question() {
+    public Answer() {
     }
 
-    public Question(String id, String question, String ownerId, Date timestamp, int votes) {
+    public Answer(String id, String answer, String ownerId, Date timestamp) {
         this.id = id;
-        this.question = question;
+        this.answer = answer;
         this.ownerId = ownerId;
         this.timestamp = timestamp;
-        this.votes = votes;
     }
 
     public String getId() {
@@ -37,12 +33,12 @@ public class Question implements Serializable {
         this.id = id;
     }
 
-    public String getQuestion() {
-        return question;
+    public String getAnswer() {
+        return answer;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
     public String getOwnerId() {
@@ -61,22 +57,13 @@ public class Question implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public int getVotes() {
-        return votes;
-    }
-
-    public void setVotes(int votes) {
-        this.votes = votes;
-    }
-
     @Override
     public String toString() {
-        return "Question{" +
+        return "Answer{" +
                 "id='" + id + '\'' +
-                ", question='" + question + '\'' +
+                ", answer='" + answer + '\'' +
                 ", ownerId='" + ownerId + '\'' +
                 ", timestamp=" + timestamp +
-                ", votes=" + votes +
                 '}';
     }
 }

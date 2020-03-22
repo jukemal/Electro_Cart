@@ -55,7 +55,7 @@ public class ProductListRecycleViewAdapter extends RecyclerView.Adapter<ProductL
 
         holder.textViewName.setText(product.getName());
 
-        holder.textViewPrice.setText(String.valueOf(product.getPrice()));
+        holder.textViewPrice.setText(String.valueOf(product.getPrice())+" LKR");
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

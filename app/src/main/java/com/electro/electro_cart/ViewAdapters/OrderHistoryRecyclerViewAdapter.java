@@ -29,6 +29,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,10 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
     public void onBindViewHolder(@NonNull OrderHistoryRecyclerViewAdapter.OrderHistoryRecyclerViewHolder holder, int position) {
         final OrderHistory orderHistory=orderHistoryList.get(position);
 
-        holder.textViewDate.setText(orderHistory.getTimestamp().toString());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm");
+        String date = simpleDateFormat.format(orderHistory.getTimestamp());
+
+        holder.textViewDate.setText(date);
 
         for (CartItem c:orderHistory.getCartItemList()){
             collectionReferenceProduct.document(c.getProductID()).get()
@@ -70,7 +74,7 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
 
                                 if (document.exists()){
                                     Product product=document.toObject(Product.class);
-                                    holder.textViewTotal.setText(String.valueOf(Double.parseDouble(holder.textViewTotal.getText().toString())+((double)(product.getPrice()*c.getItemCount()))));
+                                    holder.textViewTotal.setText(String.valueOf(Double.parseDouble(holder.textViewTotal.getText().toString())+((double)(product.getPrice()*c.getItemCount())))+" LKR");
                                 }else {
                                     Log.d("Order History", "No such document");
                                 }
@@ -155,7 +159,7 @@ class OrderHistoryRecyclerViewAdapterInner extends RecyclerView.Adapter<OrderHis
 
                         holder.textViewName.setText(product.getName());
 
-                        holder.textViewPrice.setText(String.valueOf(product.getPrice()));
+                        holder.textViewPrice.setText(String.valueOf(product.getPrice())+" LKR");
 
                         holder.textViewCount.setText("X "+String.valueOf(cartItem.getItemCount()));
                     }

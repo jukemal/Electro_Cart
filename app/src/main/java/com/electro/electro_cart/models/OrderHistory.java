@@ -1,13 +1,14 @@
 package com.electro.electro_cart.models;
 import com.google.firebase.firestore.ServerTimestamp;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import lombok.Builder;
 
 @Builder
-public class OrderHistory {
+public class OrderHistory implements Serializable {
     private List<CartItem> cartItemList;
     private @ServerTimestamp Date timestamp;
 

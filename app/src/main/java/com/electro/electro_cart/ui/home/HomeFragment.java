@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -31,6 +33,8 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
+    NavController navController;
+
     private RecyclerView recyclerView;
     private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
 
@@ -41,6 +45,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+
+        navController= Navigation.findNavController(container);
 
         ProgressBar progressBar=root.findViewById(R.id.progressBar_home);
 
@@ -60,7 +66,7 @@ public class HomeFragment extends Fragment {
                                 productList.add(p);
                             }
 
-                            homeRecyclerViewAdapter=new HomeRecyclerViewAdapter(getActivity(),productList);
+                            homeRecyclerViewAdapter=new HomeRecyclerViewAdapter(getActivity(),productList,navController);
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setAdapter(homeRecyclerViewAdapter);
                         }
@@ -68,7 +74,9 @@ public class HomeFragment extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+                Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
+                progressBar.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
             }
         });
 
@@ -95,7 +103,7 @@ public class HomeFragment extends Fragment {
                                     }
 
                                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
-                                    homeRecyclerViewAdapter=new HomeRecyclerViewAdapter(getActivity(),refreshedProductList);
+                                    homeRecyclerViewAdapter=new HomeRecyclerViewAdapter(getActivity(),refreshedProductList,navController);
                                     recyclerView.setAdapter(homeRecyclerViewAdapter);
                                     recyclerView.setVisibility(View.VISIBLE);
                                     swipeRefreshLayout.setRefreshing(false);
@@ -104,7 +112,9 @@ public class HomeFragment extends Fragment {
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
                     }
                 });
             }
