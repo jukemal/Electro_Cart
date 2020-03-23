@@ -177,7 +177,8 @@
         android:paddingStart="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_compare_product">
+        app:layout_constraintTop_toBottomOf="@+id/btn_compare_product"
+        android:visibility="gone">
 
         <com.google.android.material.chip.ChipGroup
             android:layout_width="match_parent"
@@ -187,6 +188,7 @@
             app:singleLine="true">
 
             <com.google.android.material.chip.Chip
+                android:id="@+id/store_name_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Singer"
@@ -195,14 +197,6 @@
                 app:chipIcon="@drawable/ic_home_black_24dp"
                 app:chipStartPadding="5dp"/>
 
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Abans"
-                android:textColor="#ffffff"
-                app:chipBackgroundColor="#6a0dad"
-                app:chipIcon="@drawable/ic_home_black_24dp"
-                app:chipStartPadding="5dp"/>
         </com.google.android.material.chip.ChipGroup>
     </LinearLayout>
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    xmlns:tools="http://schemas.android.com/tools">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/navigation_store_review"
@@ -32,5 +31,10 @@
             android:id="@+id/navigation_store_about_us"
             android:icon="@drawable/ic_about_us_black_24dp"
             android:title="About Us" />
+
+        <item
+            android:id="@+id/navigation_add_data"
+            android:icon="@drawable/ic_about_us_black_24dp"
+            android:title="Add Data" />
     </group>
 </menu>

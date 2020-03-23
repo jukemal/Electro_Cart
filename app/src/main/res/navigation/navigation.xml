@@ -45,6 +45,14 @@
         app:popEnterAnim="@anim/slide_in_left"
         app:popExitAnim="@anim/slide_out_right"/>
 
+    <action
+        android:id="@+id/action_to_navigation_store"
+        app:destination="@id/navigation_store"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.electro.electro_cart.ui.home.HomeFragment"
@@ -163,5 +171,9 @@
         android:id="@+id/navigation_add_data"
         android:name="com.electro.electro_cart.ui.AddDataFragment"
         android:label="Add Data" />
+    <fragment
+        android:id="@+id/navigation_store"
+        android:name="com.electro.electro_cart.ui.StoreFragment"
+        android:label="Store" />
 
 </navigation>
