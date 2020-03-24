@@ -704,8 +704,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                                     ratingList.add(rating);
                                 }
 
-                                RatingRecyclerViewAdapter questionRecyclerViewAdapter=new RatingRecyclerViewAdapter(context,ratingList,id);
-                                ratingLayoutViewHolder.recyclerView.setAdapter(questionRecyclerViewAdapter);
+                                RatingRecyclerViewAdapter ratingRecyclerViewAdapter=new RatingRecyclerViewAdapter(context,ratingList,id);
+                                ratingLayoutViewHolder.recyclerView.setAdapter(ratingRecyclerViewAdapter);
                             } else {
                                 Log.e("Rating", "Error getting documents: ", task.getException());
                             }
