@@ -38,8 +38,8 @@
         android:label="Profile" />
     <fragment
         android:id="@+id/navigation_store_review"
-        android:name="com.electro.electro_cart.ui.store.ReviewStoreFragment"
-        android:label="Reviews" />
+        android:name="com.electro.electro_cart.ui.store.QuestionStoreFragment"
+        android:label="Questions" />
     <fragment
         android:id="@+id/navigation_store_transaction_history"
         android:name="com.electro.electro_cart.ui.store.TransactionHistoryStoreFragment"
