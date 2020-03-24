@@ -71,11 +71,7 @@ public class EditProductStoreFragment extends Fragment {
 
                                 String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(product);
 
-                                String flattenedJson = JsonFlattener.flatten(json);
-
                                 Map<String, Object> flattenedJsonMap = JsonFlattener.flattenAsMap(json);
-
-                                List<TextInputLayout> textInputLayoutList = new ArrayList<>();
 
                                 for (Map.Entry<String, Object> p : flattenedJsonMap.entrySet()) {
                                     String key = p.getKey();
