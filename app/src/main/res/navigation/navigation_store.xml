@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigaton_store"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_store"
     app:startDestination="@id/navigation_store_home">
+
+    <action
+        android:id="@+id/action_to_navigation_edit_product"
+        app:destination="@id/navigation_edit_product"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
 
     <fragment
         android:id="@+id/navigation_store_home"
@@ -51,4 +60,8 @@
         android:id="@+id/navigation_add_data"
         android:name="com.electro.electro_cart.ui.AddDataFragment"
         android:label="Add Data" />
+    <fragment
+        android:id="@+id/navigation_edit_product"
+        android:name="com.electro.electro_cart.ui.store.EditProductStoreFragment"
+        android:label="Edit Product" />
 </navigation>
