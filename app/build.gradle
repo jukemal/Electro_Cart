@@ -66,4 +66,6 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.github.wnameless.json:json-flattener:0.8.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.github.lecho:hellocharts-android:v1.5.8'
 }
