@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.electro.electro_cart.LoginActivity;
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.User;
+import com.electro.electro_cart.utils.EnumUserType;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -110,6 +111,7 @@ public class SignUpActivityUserFragment extends Fragment {
                                             .location(null)
                                             .name(name)
                                             .points("0")
+                                            .userType(EnumUserType.USER)
                                             .build();
                                 }
 

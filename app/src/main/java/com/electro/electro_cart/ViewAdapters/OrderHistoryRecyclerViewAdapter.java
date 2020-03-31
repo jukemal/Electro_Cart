@@ -74,7 +74,7 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
 
                                 if (document.exists()){
                                     Product product=document.toObject(Product.class);
-                                    holder.textViewTotal.setText(String.valueOf(Double.parseDouble(holder.textViewTotal.getText().toString())+((double)(product.getPrice()*c.getItemCount())))+" LKR");
+                                    holder.textViewTotal.setText(String.valueOf(Double.parseDouble(holder.textViewTotal.getText().toString())+((double)(product.getPrice()*c.getItemCount()))));
                                 }else {
                                     Log.d("Order History", "No such document");
                                 }

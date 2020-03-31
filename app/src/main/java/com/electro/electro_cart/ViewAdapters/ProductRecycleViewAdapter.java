@@ -35,12 +35,15 @@ import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
 import com.electro.electro_cart.models.Question;
 import com.electro.electro_cart.models.Rating;
+import com.electro.electro_cart.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.ar.core.ArCoreApk;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -272,6 +275,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             //Favourite End
             //------------------------------------------------------------------------------------------------------------
 
+            // AR
 
             ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
 
@@ -289,13 +293,19 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 }
             });
 
+            // Description
+
             if (product.getDescription() == null) {
                 mainLayoutViewHolder.textViewDescription.setVisibility(View.GONE);
             } else {
                 mainLayoutViewHolder.textViewDescription.setText(product.getDescription());
             }
 
+            //Price
+
             mainLayoutViewHolder.textViewPrice.setText(String.valueOf(product.getPrice()) + " LKR");
+
+            // Rating Bar
 
             mainLayoutViewHolder.ratingBar.setRating(product.getRating());
 
@@ -438,9 +448,84 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 }
             });
 
-            //Cart End
+            // Cart End
+
             //----------------------------------------------------------------------------------------------------------
-            //Product Features
+            // Store
+
+            db.collection("users").document(finalProduct.getStoreId())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Log.d("Product Store", "DocumentSnapshot data: " + document.getData());
+
+                                    User user=document.toObject(User.class);
+
+                                    mainLayoutViewHolder.chipStore.setText(user.getName().toUpperCase());
+
+                                    mainLayoutViewHolder.chipStore.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Bundle bundle = new Bundle();
+                                            bundle.putString("StoreId", finalProduct.getStoreId());
+                                            navController.navigate(R.id.action_to_navigation_store, bundle);
+                                        }
+                                    });
+
+                                    mainLayoutViewHolder.linearLayoutStore.setVisibility(View.VISIBLE);
+
+                                    db.collection("users").document(finalProduct.getStoreId())
+                                            .collection("visits")
+                                            .document(finalProduct.getId()).get()
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot document = task.getResult();
+                                                        if (document.exists()) {
+                                                            Log.d("Visit Update", "DocumentSnapshot data: " + document.getData());
+
+                                                            Map<String,Object> map=new HashMap<>();
+                                                            map.put("visitCount",Integer.parseInt(document.get("visitCount").toString()) +1);
+                                                            map.put("timeStamp", Timestamp.now());
+
+                                                            db.collection("users").document(finalProduct.getStoreId())
+                                                                    .collection("visits")
+                                                                    .document(finalProduct.getId()).set(map);
+                                                        } else {
+                                                            Log.d("Visit Update", "No such document");
+
+                                                            Map<String,Object> map=new HashMap<>();
+                                                            map.put("visitCount",1 );
+                                                            map.put("timeStamp", Timestamp.now());
+
+                                                            db.collection("users").document(finalProduct.getStoreId())
+                                                                    .collection("visits")
+                                                                    .document(finalProduct.getId()).set(map);
+
+                                                        }
+                                                    } else {
+                                                        Log.d("Visit Update", "get failed with ", task.getException());
+                                                    }
+                                                }
+                                            });
+                                } else {
+                                    Log.d("Product Store", "No such document");
+                                }
+                            } else {
+                                Log.d("Product Store", "get failed with ", task.getException());
+                            }
+                        }
+                    });
+
+
+            // Store End
+            //----------------------------------------------------------------------------------------------------------
+            // Product Features
 
             mainLayoutViewHolder.recyclerViewProductFeatures.setHasFixedSize(true);
             mainLayoutViewHolder.recyclerViewProductFeatures.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
@@ -448,7 +533,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             ProductFeaturesRecyclerViewAdapter productFeaturesRecyclerViewAdapter = new ProductFeaturesRecyclerViewAdapter(context, product.getSpecification());
             mainLayoutViewHolder.recyclerViewProductFeatures.setAdapter(productFeaturesRecyclerViewAdapter);
 
-            //Product Features End
+            // Product Features End
             //----------------------------------------------------------------------------------------------------------
 
         }else if (holder.getItemViewType()==BOUGHT_TOGETHER_LAYOUT){
@@ -476,7 +561,15 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             });
 
             Random random=new Random();
-            Product productRandom=products.get(random.nextInt(products.size()));
+
+            List<Product> randomProductList=new ArrayList<>();
+
+            for (Product p:products){
+                if (p.getId()!=product.getId()){
+                    randomProductList.add(p);
+                }
+            }
+            Product productRandom=randomProductList.get(random.nextInt(randomProductList.size()));
 
             Glide.with(context)
                     .load(storage.getReferenceFromUrl(productRandom.getImage_links().get(0)))
@@ -611,8 +704,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                                     ratingList.add(rating);
                                 }
 
-                                RatingRecyclerViewAdapter questionRecyclerViewAdapter=new RatingRecyclerViewAdapter(context,ratingList,id);
-                                ratingLayoutViewHolder.recyclerView.setAdapter(questionRecyclerViewAdapter);
+                                RatingRecyclerViewAdapter ratingRecyclerViewAdapter=new RatingRecyclerViewAdapter(context,ratingList,id);
+                                ratingLayoutViewHolder.recyclerView.setAdapter(ratingRecyclerViewAdapter);
                             } else {
                                 Log.e("Rating", "Error getting documents: ", task.getException());
                             }
@@ -683,6 +776,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         Button buttonRemoveFromCart;
         RecyclerView recyclerViewProductFeatures;
         Button buttonCompareProducts;
+        Chip chipStore;
+        LinearLayout linearLayoutStore;
 
         public MainLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -701,6 +796,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             buttonRemoveFromCart = itemView.findViewById(R.id.btn_remove_from_cart_product);
             recyclerViewProductFeatures = itemView.findViewById(R.id.product_features_recyclerView);
             buttonCompareProducts = itemView.findViewById(R.id.btn_compare_product);
+            chipStore=itemView.findViewById(R.id.store_name_product);
+            linearLayoutStore=itemView.findViewById(R.id.Linear_layout_available_stores);
         }
     }
 

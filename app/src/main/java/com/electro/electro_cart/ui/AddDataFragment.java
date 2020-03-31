@@ -21,6 +21,7 @@ import com.electro.electro_cart.SplashActivity;
 import com.electro.electro_cart.models.Answer;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
+import com.electro.electro_cart.models.Promotion;
 import com.electro.electro_cart.models.Question;
 import com.electro.electro_cart.models.Rating;
 import com.electro.electro_cart.models.Specification;
@@ -29,6 +30,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.electro.electro_cart.R;
@@ -37,6 +39,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AddDataFragment extends Fragment {
@@ -118,18 +122,22 @@ public class AddDataFragment extends Fragment {
                 .feature("Optical drive ")
                 .feature("Security Lock slot").build();
 
+        Promotion promotion1=Promotion.builder()
+                .description("Best Budget Laptop\n\n\nNow you have the chance to buy the best budget laptop with 40% discount. Hurry up. Offer only valid until April 25.")
+                .discountPercentage(40)
+                .endDate(new Timestamp(new Date(2020,4,25))).build();
+
         final Product product1 = Product.builder().name("ASUS VivoBook E12 E203")
                 .price(45000)
                 .productType(EnumProductType.LAPTOP)
-                .available_store("singer")
-                .available_store("abans")
+                .storeId(ownerId)
                 .description(null)
                 .specification(specification1)
                 .image_link("gs://electro-cart-5c643.appspot.com/ASUS VivoBook E12 E203-1.png")
                 .image_link("gs://electro-cart-5c643.appspot.com/ASUS VivoBook E12 E203-2.png")
                 .image_link("gs://electro-cart-5c643.appspot.com/ASUS VivoBook E12 E203-3.png")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
-                .promotion(0)
+                .promotion(promotion1)
                 .rating(5).build();
 
         Button button1 = root.findViewById(R.id.btnP1);
@@ -202,15 +210,14 @@ public class AddDataFragment extends Fragment {
         final Product product2=Product.builder().name("Dell XPS 13 9370")
                 .price(180000)
                 .productType(EnumProductType.LAPTOP)
-                .available_store("metropolitan")
-                .available_store("nanotek")
+                .storeId(ownerId)
                 .description(null)
                 .image_link("gs://electro-cart-5c643.appspot.com/Dell XPS 13 9370-1.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Dell XPS 13 9370-2.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Dell XPS 13 9370-3.jpg")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
                 .specification(specification2)
-                .promotion(160000)
+                .promotion(null)
                 .rating(4).build();
 
         Button button2=root.findViewById(R.id.btnP2);
@@ -286,14 +293,13 @@ public class AddDataFragment extends Fragment {
         final Product product3=Product.builder().name("Samsung Galaxy S20 Ultra 5G")
                 .price(160000)
                 .productType(EnumProductType.PHONE)
-                .available_store("singer")
-                .available_store("abans")
+                .storeId(ownerId)
                 .description(null)
                 .specification(specification3)
                 .image_link("gs://electro-cart-5c643.appspot.com/Samsung Galaxy S20 Ultra 5G-1.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Samsung Galaxy S20 Ultra 5G-2.jpg")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
-                .promotion(145000)
+                .promotion(promotion1)
                 .rating(3).build();
 
         Button button3=root.findViewById(R.id.btnP3);
@@ -364,14 +370,15 @@ public class AddDataFragment extends Fragment {
                 .name("Apple MacBook Pro 13 (Mid-2017)")
                 .price(350000)
                 .productType(EnumProductType.LAPTOP)
-                .available_store("metropolitan")
-                .available_store("abans")
+                .storeId(ownerId)
                 .description(null)
                 .image_link("gs://electro-cart-5c643.appspot.com/Apple MacBook Pro 13 (Mid-2017)-1.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Apple MacBook Pro 13 (Mid-2017)-2.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Apple MacBook Pro 13 (Mid-2017)-3.jpg")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
                 .specification(specification4)
+                .rating(5)
+                .promotion(null)
                 .build();
 
         Button button4=root.findViewById(R.id.btnP4);
@@ -444,13 +451,14 @@ public class AddDataFragment extends Fragment {
                 .name("Google Pixel 4a")
                 .price(135000)
                 .productType(EnumProductType.PHONE)
-                .available_store("singer")
-                .available_store("abans")
+                .storeId("36363653535353")
                 .description(null)
                 .image_link("gs://electro-cart-5c643.appspot.com/Google Pixel 4a-1jpg.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Google Pixel 4a-2.jpg")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
                 .specification(specification5)
+                .promotion(null)
+                .rating(5)
                 .build();
 
         Button button5=root.findViewById(R.id.btnP5);
@@ -525,11 +533,12 @@ public class AddDataFragment extends Fragment {
                 .name("Xiaomi Redmi Note 9 Pro")
                 .price(75000)
                 .productType(EnumProductType.PHONE)
-                .available_store("singer")
-                .available_store("metropolitan")
+                .storeId("53367827833538")
                 .description(null)
                 .image_link("gs://electro-cart-5c643.appspot.com/Xiaomi Redmi Note 9 Pro-1.jpg")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")
+                .promotion(null)
+                .rating(4)
                 .build();
 
         Button button6=root.findViewById(R.id.btnP6);

@@ -1,4 +1,5 @@
 package com.electro.electro_cart.models;
+import com.electro.electro_cart.utils.EnumUserType;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.Serializable;
@@ -14,18 +15,20 @@ public class User implements Serializable {
     private String name;
     private String location;
     private String points;
+    private EnumUserType userType;
     private @ServerTimestamp Date timestamp;
 
     public User() {
     }
 
-    public User(String id, String email, String telephoneNumber, String name, String location, String points, Date timestamp) {
+    public User(String id, String email, String telephoneNumber, String name, String location, String points, EnumUserType userType, Date timestamp) {
         this.id = id;
         this.email = email;
         this.telephoneNumber = telephoneNumber;
         this.name = name;
         this.location = location;
         this.points = points;
+        this.userType = userType;
         this.timestamp = timestamp;
     }
 
@@ -77,6 +80,14 @@ public class User implements Serializable {
         this.points = points;
     }
 
+    public EnumUserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(EnumUserType userType) {
+        this.userType = userType;
+    }
+
     public Date getTimestamp() {
         return timestamp;
     }
@@ -94,6 +105,7 @@ public class User implements Serializable {
                 ", name='" + name + '\'' +
                 ", location='" + location + '\'' +
                 ", points='" + points + '\'' +
+                ", userType=" + userType +
                 ", timestamp=" + timestamp +
                 '}';
     }

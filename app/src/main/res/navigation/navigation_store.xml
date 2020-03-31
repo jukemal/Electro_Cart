@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_store"
+    app:startDestination="@id/navigation_store_home">
+
+    <action
+        android:id="@+id/action_to_navigation_edit_product"
+        app:destination="@id/navigation_edit_product"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+
+    <action
+        android:id="@+id/action_to_navigation_add_product"
+        app:destination="@id/navigation_add_product"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"/>
+
+    <fragment
+        android:id="@+id/navigation_store_home"
+        android:name="com.electro.electro_cart.ui.store.HomeStoreFragment"
+        android:label="Home" />
+    <fragment
+        android:id="@+id/navigation_store_promotion"
+        android:name="com.electro.electro_cart.ui.store.PromotionStoreFragment"
+        android:label="Promotions" />
+    <fragment
+        android:id="@+id/navigation_store_notification"
+        android:name="com.electro.electro_cart.ui.store.NotificationStoreFragment"
+        android:label="Notifications" />
+    <fragment
+        android:id="@+id/navigation_store_profile"
+        android:name="com.electro.electro_cart.ui.store.ProfileStoreFragment"
+        android:label="Profile" />
+    <fragment
+        android:id="@+id/navigation_store_review"
+        android:name="com.electro.electro_cart.ui.store.QuestionStoreFragment"
+        android:label="Questions" />
+    <fragment
+        android:id="@+id/navigation_store_transaction_history"
+        android:name="com.electro.electro_cart.ui.store.TransactionHistoryStoreFragment"
+        android:label="Transaction History" />
+    <fragment
+        android:id="@+id/navigation_store_visits"
+        android:name="com.electro.electro_cart.ui.store.VisitsStoreFragment"
+        android:label="Store Visits" />
+    <fragment
+        android:id="@+id/navigation_store_revenue"
+        android:name="com.electro.electro_cart.ui.store.RevenueStoreFragment"
+        android:label="Store Revenue" />
+    <fragment
+        android:id="@+id/navigation_store_rating"
+        android:name="com.electro.electro_cart.ui.store.RatingStoreFragment"
+        android:label="Ratings" />
+    <fragment
+        android:id="@+id/navigation_store_contact_us"
+        android:name="com.electro.electro_cart.ui.store.ContactUsStoreFragment"
+        android:label="Contact Us" />
+    <fragment
+        android:id="@+id/navigation_store_about_us"
+        android:name="com.electro.electro_cart.ui.store.AboutUsStoreFragment"
+        android:label="About Us" />
+    <fragment
+        android:id="@+id/navigation_add_data"
+        android:name="com.electro.electro_cart.ui.AddDataFragment"
+        android:label="Add Data" />
+    <fragment
+        android:id="@+id/navigation_edit_product"
+        android:name="com.electro.electro_cart.ui.store.EditProductStoreFragment"
+        android:label="Edit Product" />
+    <fragment
+        android:id="@+id/navigation_add_product"
+        android:name="com.electro.electro_cart.ui.store.AddProductStoreFragment"
+        android:label="Add Product" />
+</navigation>

@@ -17,24 +17,24 @@ public class Product implements Serializable {
     private String name;
     private int price;
     private EnumProductType productType;
-    @Singular private List<String> available_stores;
+    private String storeId;
     private String description;
     private Specification specification;
     @Singular private List<String> image_links;
     private String ar_link;
     private @ServerTimestamp Date timestamp;
-    private int promotion;
+    private Promotion promotion;
     private int rating;
 
     public Product() {
     }
 
-    public Product(String id, String name, int price, EnumProductType productType, List<String> available_stores, String description, Specification specification, List<String> image_links, String ar_link, Date timestamp, int promotion, int rating) {
+    public Product(String id, String name, int price, EnumProductType productType, String storeId, String description, Specification specification, List<String> image_links, String ar_link, Date timestamp, Promotion promotion, int rating) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.productType = productType;
-        this.available_stores = available_stores;
+        this.storeId = storeId;
         this.description = description;
         this.specification = specification;
         this.image_links = image_links;
@@ -76,12 +76,12 @@ public class Product implements Serializable {
         this.productType = productType;
     }
 
-    public List<String> getAvailable_stores() {
-        return available_stores;
+    public String getStoreId() {
+        return storeId;
     }
 
-    public void setAvailable_stores(List<String> available_stores) {
-        this.available_stores = available_stores;
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 
     public String getDescription() {
@@ -124,11 +124,11 @@ public class Product implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public int getPromotion() {
+    public Promotion getPromotion() {
         return promotion;
     }
 
-    public void setPromotion(int promotion) {
+    public void setPromotion(Promotion promotion) {
         this.promotion = promotion;
     }
 
@@ -147,7 +147,7 @@ public class Product implements Serializable {
                 ", name='" + name + '\'' +
                 ", price=" + price +
                 ", productType=" + productType +
-                ", available_stores=" + available_stores +
+                ", storeId='" + storeId + '\'' +
                 ", description='" + description + '\'' +
                 ", specification=" + specification +
                 ", image_links=" + image_links +

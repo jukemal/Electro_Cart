@@ -18,9 +18,11 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme">
-
-        </activity>
+            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".StoreMainActivity"
+            android:label="@string/title_activity_store_main"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".SignUpActivity.SignUpActivity"
             android:label="@string/title_activity_sign_up"
@@ -45,6 +47,7 @@
         </activity>
 
         <meta-data android:name="com.google.ar.core" android:value="optional" />
+
     </application>
 
 </manifest>
