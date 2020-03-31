@@ -77,7 +77,7 @@ public class TransactionHistoryStoreRecyclerViewAdapter extends RecyclerView.Ada
                             Log.e("History",orderHistoryList.toString());
                         }else {
                             holder.recyclerView.setVisibility(View.GONE);
-                            Toast.makeText(context, "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+                            Toast.makeText(context, "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
