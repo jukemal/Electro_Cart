@@ -29,10 +29,6 @@
         android:name="com.electro.electro_cart.ui.store.PromotionStoreFragment"
         android:label="Promotions" />
     <fragment
-        android:id="@+id/navigation_store_notification"
-        android:name="com.electro.electro_cart.ui.store.NotificationStoreFragment"
-        android:label="Notifications" />
-    <fragment
         android:id="@+id/navigation_store_profile"
         android:name="com.electro.electro_cart.ui.store.ProfileStoreFragment"
         android:label="Profile" />

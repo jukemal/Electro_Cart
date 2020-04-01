@@ -122,10 +122,13 @@ public class AddDataFragment extends Fragment {
                 .feature("Optical drive ")
                 .feature("Security Lock slot").build();
 
+        Calendar c = Calendar.getInstance();
+        c.set(2020,4,20);
+
         Promotion promotion1=Promotion.builder()
                 .description("Best Budget Laptop\n\n\nNow you have the chance to buy the best budget laptop with 40% discount. Hurry up. Offer only valid until April 25.")
                 .discountPercentage(40)
-                .endDate(new Timestamp(new Date(2020,4,25))).build();
+                .endDate(c.getTime()).build();
 
         final Product product1 = Product.builder().name("ASUS VivoBook E12 E203")
                 .price(45000)
