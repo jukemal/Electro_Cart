@@ -1,13 +1,16 @@
 package com.electro.electro_cart.ViewAdapters;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +21,7 @@ import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.OrderHistory;
 import com.electro.electro_cart.models.Product;
+import com.electro.electro_cart.models.Promotion;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -115,15 +119,15 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
 class OrderHistoryRecyclerViewAdapterInner extends RecyclerView.Adapter<OrderHistoryRecyclerViewAdapterInner.OrderHistoryRecyclerViewHolderInner>{
 
 
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private final CollectionReference collectionReferenceProduct = db.collection("products");
 
 
-    Context context;
-    List<CartItem> cartItemList;
+    private Context context;
+    private List<CartItem> cartItemList;
 
     public OrderHistoryRecyclerViewAdapterInner(Context context, List<CartItem> cartItemList) {
         this.context = context;
@@ -149,6 +153,8 @@ class OrderHistoryRecyclerViewAdapterInner extends RecyclerView.Adapter<OrderHis
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         Product product =documentSnapshot.toObject(Product.class);
 
+                        final Promotion promotion=product.getPromotion();
+
                         Glide.with(context)
                                 .load(storage.getReferenceFromUrl(product.getImage_links().get(0)))
                                 .transition(withCrossFade())
@@ -159,9 +165,25 @@ class OrderHistoryRecyclerViewAdapterInner extends RecyclerView.Adapter<OrderHis
 
                         holder.textViewName.setText(product.getName());
 
-                        holder.textViewPrice.setText(String.valueOf(product.getPrice())+" LKR");
-
                         holder.textViewCount.setText("X "+String.valueOf(cartItem.getItemCount()));
+
+                        if (promotion==null){
+                            holder.textViewPrice.setText(String.valueOf(product.getPrice())+" LKR");
+                        }else {
+                            int price=product.getPrice()*(100-promotion.getDiscountPercentage())/100;
+
+                            holder.textViewPrice.setText(String.valueOf(price)+" LKR");
+
+                            holder.textViewPriceDiscount.setText(String.valueOf(product.getPrice())+" LKR");
+
+                            holder.textViewPriceDiscount.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+
+                            holder.textViewPriceDiscount.setVisibility(View.VISIBLE);
+
+                            holder.textViewPromotionBadge.setVisibility(View.VISIBLE);
+                        }
+
+                        holder.ratingBar.setRating(product.getRating());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -182,14 +204,22 @@ class OrderHistoryRecyclerViewAdapterInner extends RecyclerView.Adapter<OrderHis
         TextView textViewName;
         TextView textViewPrice;
         TextView textViewCount;
+        TextView textViewPriceDiscount;
+
+        RatingBar ratingBar;
+
+        TextView textViewPromotionBadge;
 
          OrderHistoryRecyclerViewHolderInner(@NonNull View itemView) {
             super(itemView);
 
-             imageView=itemView.findViewById(R.id.imgThumb_item_order_history_nested);
-             textViewName=itemView.findViewById(R.id.txt_name_item_order_history_nested);
-             textViewPrice=itemView.findViewById(R.id.txt_price_item_order_history_nested);
-             textViewCount=itemView.findViewById(R.id.txt_count_item_order_history_nested);
+             imageView=itemView.findViewById(R.id.imgThumb_item_cart);
+             textViewName=itemView.findViewById(R.id.txt_name_item_cart);
+             textViewPrice=itemView.findViewById(R.id.txt_price_item_cart);
+             textViewCount=itemView.findViewById(R.id.txt_count_item_cart);
+             textViewPriceDiscount = itemView.findViewById(R.id.textPriceDiscount);
+             ratingBar = itemView.findViewById(R.id.product_rating_product);
+             textViewPromotionBadge = itemView.findViewById(R.id.promotion_badge);
         }
     }
 }
