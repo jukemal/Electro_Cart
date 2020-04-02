@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -56,6 +57,8 @@ public class TrackingFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_tracking, container, false);
 
+        ProgressBar progressBar=root.findViewById(R.id.progressBar);
+
         ConstraintLayout constraintLayoutMain=root.findViewById(R.id.constraintLayout_main_order_tracking);
         ConstraintLayout constraintLayoutInner=root.findViewById(R.id.constraintLayout_inner_order_tracking);
 
@@ -84,7 +87,7 @@ public class TrackingFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             if (task.getResult().isEmpty()) {
-                                constraintLayoutMain.setVisibility(View.GONE);
+                                progressBar.setVisibility(View.GONE);
                                 constraintLayoutInner.setVisibility(View.VISIBLE);
                             } else {
                                 String orderStatus=null;
@@ -113,9 +116,14 @@ public class TrackingFragment extends Fragment {
                                 }else {
                                     floatingActionButton1.setEnabled(true);
                                 }
+
+                                progressBar.setVisibility(View.GONE);
+                                constraintLayoutMain.setVisibility(View.VISIBLE);
                             }
                         } else {
                             Log.e("Order Tracking", "Error getting documents: ", task.getException());
+                            progressBar.setVisibility(View.GONE);
+                            constraintLayoutInner.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -255,7 +263,7 @@ public class TrackingFragment extends Fragment {
                 View popupView = LayoutInflater.from(getContext()).inflate(R.layout.layout_order_tracking_popup, null);
                 PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
                 popupWindow.setAnimationStyle(R.style.Animation_Design_BottomSheetDialog);
-                popupView.setBackground(new ColorDrawable(Color.parseColor("#e2e2e2")));
+                popupView.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
                 popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
                 Button buttonPopupOk=popupView.findViewById(R.id.btn_ok_order_tracking_popup);
