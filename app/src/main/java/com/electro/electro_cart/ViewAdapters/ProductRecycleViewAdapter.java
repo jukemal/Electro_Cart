@@ -3,6 +3,7 @@ package com.electro.electro_cart.ViewAdapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
+import com.electro.electro_cart.models.Promotion;
 import com.electro.electro_cart.models.Question;
 import com.electro.electro_cart.models.Rating;
 import com.electro.electro_cart.models.User;
@@ -274,7 +276,29 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             //Favourite End
             //------------------------------------------------------------------------------------------------------------
+            //Promotion
 
+            final Promotion promotion=product.getPromotion();
+
+
+            if (promotion==null){
+                mainLayoutViewHolder.textViewPrice.setText(String.valueOf(product.getPrice()) + " LKR");
+            }else {
+                int price=product.getPrice()*(100-promotion.getDiscountPercentage())/100;
+
+                mainLayoutViewHolder.textViewPrice.setText(String.valueOf(price)+" LKR");
+
+                mainLayoutViewHolder.textViewPriceDiscount.setText(String.valueOf(product.getPrice())+" LKR");
+
+                mainLayoutViewHolder.textViewPriceDiscount.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+
+                mainLayoutViewHolder.textViewPriceDiscount.setVisibility(View.VISIBLE);
+
+                mainLayoutViewHolder.textViewPromotionBadge.setVisibility(View.VISIBLE);
+            }
+
+            //Promotion End
+            //------------------------------------------------------------------------------------------------------------
             // AR
 
             ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
@@ -300,10 +324,6 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             } else {
                 mainLayoutViewHolder.textViewDescription.setText(product.getDescription());
             }
-
-            //Price
-
-            mainLayoutViewHolder.textViewPrice.setText(String.valueOf(product.getPrice()) + " LKR");
 
             // Rating Bar
 
@@ -778,6 +798,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         Button buttonCompareProducts;
         Chip chipStore;
         LinearLayout linearLayoutStore;
+        TextView textViewPromotionBadge;
+        TextView textViewPriceDiscount;
 
         public MainLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -798,6 +820,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             buttonCompareProducts = itemView.findViewById(R.id.btn_compare_product);
             chipStore=itemView.findViewById(R.id.store_name_product);
             linearLayoutStore=itemView.findViewById(R.id.Linear_layout_available_stores);
+            textViewPromotionBadge=itemView.findViewById(R.id.promotion_badge);
+            textViewPriceDiscount=itemView.findViewById(R.id.textPriceDiscount);
         }
     }
 
