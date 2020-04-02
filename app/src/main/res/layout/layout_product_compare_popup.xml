@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_add_white_50dp"
-                app:backgroundTint="@color/colorPrimary"
+                app:backgroundTint="@color/colorAccent"
                 app:elevation="1dp"
                 app:fabCustomSize="50dp" />
         </LinearLayout>

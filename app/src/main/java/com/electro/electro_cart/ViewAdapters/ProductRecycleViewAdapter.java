@@ -339,7 +339,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     View popupView = LayoutInflater.from(context).inflate(R.layout.layout_product_compare_popup, null);
                     PopupWindow popupWindow = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, true);
                     popupWindow.setAnimationStyle(R.style.Animation_Design_BottomSheetDialog);
-                    popupView.setBackground(new ColorDrawable(Color.parseColor("#e2e2e2")));
+                    popupView.setBackground(new ColorDrawable(context.getResources().getColor(R.color.colorPrimary)));
                     popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
                     ImageView imageViewImageProductCompare = popupView.findViewById(R.id.imageView_image_product_compare);
