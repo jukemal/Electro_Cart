@@ -37,7 +37,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="180sp"
+        android:layout_height="wrap_content"
         android:id="@+id/recyclerview_home_row"
         android:layout_gravity="center_vertical"
         android:orientation="horizontal"/>
