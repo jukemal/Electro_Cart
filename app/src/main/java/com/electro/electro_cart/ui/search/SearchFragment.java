@@ -6,10 +6,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.SearchView;
 
 import android.widget.TextView;
@@ -29,6 +33,7 @@ import com.electro.electro_cart.models.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -43,7 +48,7 @@ public class SearchFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private SearchRecyclerViewAdapter searchRecyclerViewAdapter;
-    SearchView searchView;
+    private SearchView searchView;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -76,16 +81,13 @@ public class SearchFragment extends Fragment {
                             searchRecyclerViewAdapter = new SearchRecyclerViewAdapter(getActivity(), productList);
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setAdapter(searchRecyclerViewAdapter);
+                        } else {
+                            Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.GONE);
                         }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
-            }
-        });
+                });
 
         searchView = root.findViewById(R.id.searchView_search);
 
@@ -138,8 +140,8 @@ public class SearchFragment extends Fragment {
                                             productList.add(p);
                                         }
 
-                                        searchRecyclerViewAdapter=null;
-                                        searchRecyclerViewAdapter=new SearchRecyclerViewAdapter(getContext(),productList);
+                                        searchRecyclerViewAdapter = null;
+                                        searchRecyclerViewAdapter = new SearchRecyclerViewAdapter(getContext(), productList);
 
                                         recyclerView.setAdapter(null);
                                         recyclerView.setLayoutManager(null);
@@ -173,8 +175,8 @@ public class SearchFragment extends Fragment {
                                             productList.add(p);
                                         }
 
-                                        searchRecyclerViewAdapter=null;
-                                        searchRecyclerViewAdapter=new SearchRecyclerViewAdapter(getContext(),productList);
+                                        searchRecyclerViewAdapter = null;
+                                        searchRecyclerViewAdapter = new SearchRecyclerViewAdapter(getContext(), productList);
 
                                         recyclerView.setAdapter(null);
                                         recyclerView.setLayoutManager(null);
@@ -208,8 +210,8 @@ public class SearchFragment extends Fragment {
                                             productList.add(p);
                                         }
 
-                                        searchRecyclerViewAdapter=null;
-                                        searchRecyclerViewAdapter=new SearchRecyclerViewAdapter(getContext(),productList);
+                                        searchRecyclerViewAdapter = null;
+                                        searchRecyclerViewAdapter = new SearchRecyclerViewAdapter(getContext(), productList);
 
                                         recyclerView.setAdapter(null);
                                         recyclerView.setLayoutManager(null);
@@ -243,8 +245,8 @@ public class SearchFragment extends Fragment {
                                             productList.add(p);
                                         }
 
-                                        searchRecyclerViewAdapter=null;
-                                        searchRecyclerViewAdapter=new SearchRecyclerViewAdapter(getContext(),productList);
+                                        searchRecyclerViewAdapter = null;
+                                        searchRecyclerViewAdapter = new SearchRecyclerViewAdapter(getContext(), productList);
 
                                         recyclerView.setAdapter(null);
                                         recyclerView.setLayoutManager(null);
@@ -274,6 +276,142 @@ public class SearchFragment extends Fragment {
                 popupMenu.show();
             }
         });
+
+        //--------------------------------------------------------------------------------------------------------
+        //Filter
+
+        ImageButton imageButtonFilter=root.findViewById(R.id.filter_imgBtn);
+
+        imageButtonFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View dialogView= inflater.inflate(R.layout.layout_search_filter_popup, null);
+
+                MaterialAlertDialogBuilder builder=new MaterialAlertDialogBuilder(getContext());
+                builder.setView(dialogView);
+                final AlertDialog alertDialog=builder.show();
+
+                Button buttonFilter=dialogView.findViewById(R.id.btnFilter);
+
+                buttonFilter.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
+
+                ImageButton imageButtonClose=dialogView.findViewById(R.id.close);
+
+                imageButtonClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.dismiss();
+                    }
+                });
+
+                {
+                    AppCompatSpinner appCompatSpinner = dialogView.findViewById(R.id.spinner_type);
+
+                    List<String> list = new ArrayList<>();
+                    list.add("Laptop");
+                    list.add("Phone");
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    appCompatSpinner.setAdapter(arrayAdapter);
+                }
+
+                {
+                    AppCompatSpinner appCompatSpinner = dialogView.findViewById(R.id.spinner_processor);
+
+                    List<String> list = new ArrayList<>();
+                    list.add("Intel Core i7");
+                    list.add("Intel Core i5");
+                    list.add("Intel Core i3");
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    appCompatSpinner.setAdapter(arrayAdapter);
+                }
+
+                {
+                    AppCompatSpinner appCompatSpinner = dialogView.findViewById(R.id.spinner_display);
+
+                    List<String> list = new ArrayList<>();
+                    list.add("15\" HD");
+                    list.add("15\" Full HD");
+                    list.add("17\" HD");
+                    list.add("17\" Full HD");
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    appCompatSpinner.setAdapter(arrayAdapter);
+                }
+
+                {
+                    AppCompatSpinner appCompatSpinner = dialogView.findViewById(R.id.spinner_memory);
+
+                    List<String> list = new ArrayList<>();
+                    list.add("4GB");
+                    list.add("8GB");
+                    list.add("16GB");
+                    list.add("32GB");
+                    list.add("64GB");
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    appCompatSpinner.setAdapter(arrayAdapter);
+                }
+
+                {
+                    AppCompatSpinner appCompatSpinner = dialogView.findViewById(R.id.spinner_storage);
+
+                    List<String> list = new ArrayList<>();
+                    list.add("128GB");
+                    list.add("256GB");
+                    list.add("512GB");
+                    list.add("1TB");
+                    list.add("2TB");
+                    list.add("4TB");
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    appCompatSpinner.setAdapter(arrayAdapter);
+                }
+
+                {
+                    AppCompatSpinner appCompatSpinner = dialogView.findViewById(R.id.spinner_graphics);
+
+                    List<String> list = new ArrayList<>();
+                    list.add("Nvidia");
+                    list.add("AMD");
+                    list.add("Qualcomm");
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    appCompatSpinner.setAdapter(arrayAdapter);
+                }
+
+                {
+                    AppCompatSpinner appCompatSpinner = dialogView.findViewById(R.id.spinner_operating_system);
+
+                    List<String> list = new ArrayList<>();
+                    list.add("Windows 10");
+                    list.add("Windows 8");
+                    list.add("Windows 7");
+                    list.add("MacOS");
+                    list.add("Linux");
+                    list.add("Android");
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+                    arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    appCompatSpinner.setAdapter(arrayAdapter);
+                }
+            }
+        });
+
+        //Filter End
+        //--------------------------------------------------------------------------------------------------------
 
         return root;
     }

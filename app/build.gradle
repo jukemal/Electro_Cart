@@ -68,4 +68,5 @@ dependencies {
     implementation 'com.github.wnameless.json:json-flattener:0.8.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.github.lecho:hellocharts-android:v1.5.8'
+    implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.2'
 }
