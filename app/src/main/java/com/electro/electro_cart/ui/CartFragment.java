@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -40,6 +41,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,8 @@ public class CartFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private CartRecyclerViewAdapter cartRecyclerViewAdapter;
+
+    private FirebaseAnalytics firebaseAnalytics;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -73,6 +77,16 @@ public class CartFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_cart, container, false);
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+        firebaseAnalytics.setUserId(firebaseAuth.getUid());
+
+        Calendar calendar=Calendar.getInstance();
+
+        Bundle bundle=new Bundle();
+        bundle.putString("time",calendar.getTime().toString());
+
+        firebaseAnalytics.logEvent("view_cart",bundle);
 
         ProgressBar progressBar = root.findViewById(R.id.progressBar_cart);
 
@@ -158,6 +172,18 @@ public class CartFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                Bundle bundle=new Bundle();
+                                bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                                bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(total));
+
+                                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE,bundle);
+
+                                Bundle bundlePoints=new Bundle();
+                                bundlePoints.putString(FirebaseAnalytics.Param.VIRTUAL_CURRENCY_NAME,"Points");
+                                bundlePoints.putString(FirebaseAnalytics.Param.VALUE,"50");
+
+                                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.EARN_VIRTUAL_CURRENCY,bundlePoints);
+
                                 Map<String, Object> data = new HashMap<>();
                                 data.put("orderStatus", EnumOrderTrackingStatus.ORDER_ACCEPTED);
 
