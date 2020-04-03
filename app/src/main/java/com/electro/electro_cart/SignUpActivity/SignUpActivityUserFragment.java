@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,10 +31,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignUpActivityUserFragment extends Fragment {
 
-    FirebaseAuth firebaseAuth;
-    Button btnSignUp;
-    TextInputEditText txtName, txtPhoneNumber, txtEmail, txtPassword;
-    TextInputLayout txtNameLayout, txtPhoneNumberLayout, txtEmailLayout, txtPasswordLayout;
+    private FirebaseAnalytics firebaseAnalytics;
+
+    private FirebaseAuth firebaseAuth;
+    private Button btnSignUp;
+    private TextInputEditText txtName, txtPhoneNumber, txtEmail, txtPassword;
+    private TextInputLayout txtNameLayout, txtPhoneNumberLayout, txtEmailLayout, txtPasswordLayout;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -50,6 +53,8 @@ public class SignUpActivityUserFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         firebaseAuth = FirebaseAuth.getInstance();
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
 
         txtName = view.findViewById(R.id.txtName);
         txtPhoneNumber = view.findViewById(R.id.txtPhoneNumber);
@@ -98,6 +103,12 @@ public class SignUpActivityUserFragment extends Fragment {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                                firebaseAnalytics.setUserId(user.getUid());
+
+                                Bundle bundle=new Bundle();
+                                bundle.putString(FirebaseAnalytics.Param.METHOD,"email");
+                                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP,bundle);
 
                                 Log.e("user",user.getEmail());
 

@@ -46,6 +46,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.ar.core.ArCoreApk;
 import com.google.firebase.Timestamp;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -79,6 +80,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     NavController navController;
 
     private ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface;
+
+    private FirebaseAnalytics firebaseAnalytics;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -116,6 +119,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         this.id = id;
         this.productRecycleViewAdapterClickInterface = productRecycleViewAdapterClickInterface;
         this.navController = navController;
+
+        firebaseAnalytics=FirebaseAnalytics.getInstance(context);
+        firebaseAnalytics.setUserId(firebaseAuth.getUid());
 
         documentReferenceProduct = collectionReferenceProduct.document(id);
         collectionReferenceQuestions=documentReferenceProduct.collection("questions");
@@ -243,6 +249,15 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     if (isChecked) {
+                        Bundle bundle=new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID,finalProduct1.getId());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,finalProduct1.getName());
+                        bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(finalProduct1.getPrice()));
+
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_TO_WISHLIST,bundle);
+
                         collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite", "true")
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -279,7 +294,6 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             //Promotion
 
             final Promotion promotion=product.getPromotion();
-
 
             if (promotion==null){
                 mainLayoutViewHolder.textViewPrice.setText(String.valueOf(product.getPrice()) + " LKR");
@@ -437,6 +451,15 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        Bundle bundle=new Bundle();
+                                        bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                                        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
+                                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID,finalProduct1.getId());
+                                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,finalProduct1.getName());
+                                        bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(finalProduct1.getPrice()));
+
+                                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_TO_CART,bundle);
+
                                         Toast.makeText(context, "Added to Cart", Toast.LENGTH_SHORT).show();
                                         Navigation.findNavController(view).navigate(R.id.action_to_navigation_cart);
                                     }
@@ -456,6 +479,15 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     collectionReferenceCart.document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            Bundle bundle=new Bundle();
+                            bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_ID,finalProduct1.getId());
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,finalProduct1.getName());
+                            bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(finalProduct1.getPrice()));
+
+                            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.REMOVE_FROM_CART,bundle);
+
                             Toast.makeText(context, "Removed from Cart.", Toast.LENGTH_SHORT).show();
                             productRecycleViewAdapterClickInterface.RemoveFromCartClicked();
                         }
@@ -569,16 +601,6 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             boughtTogetherLayoutViewHolder.textViewName1.setText(product.getName());
             boughtTogetherLayoutViewHolder.textViewPrice1.setText(String.valueOf(product.getPrice())+" LKR");
-
-            Product finalProduct3 = product;
-            boughtTogetherLayoutViewHolder.linearLayoutProduct1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Bundle bundle=new Bundle();
-                    bundle.putString("id", finalProduct3.getId());
-                    Navigation.findNavController(view).navigate(R.id.action_to_navigation_product,bundle);
-                }
-            });
 
             Random random=new Random();
 

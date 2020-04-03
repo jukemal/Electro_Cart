@@ -22,6 +22,7 @@ import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.Product;
 import com.electro.electro_cart.models.Promotion;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,6 +42,8 @@ public class PromotionRecyclerViewAdapter extends RecyclerView.Adapter<Promotion
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -51,6 +54,9 @@ public class PromotionRecyclerViewAdapter extends RecyclerView.Adapter<Promotion
         this.context = context;
         this.products = products;
         this.navController=navController;
+
+        firebaseAnalytics=FirebaseAnalytics.getInstance(context);
+        firebaseAnalytics.setUserId(firebaseAuth.getUid());
     }
 
     @NonNull
@@ -64,6 +70,15 @@ public class PromotionRecyclerViewAdapter extends RecyclerView.Adapter<Promotion
     @Override
     public void onBindViewHolder(@NonNull PromotionRecyclerViewAdapter.PromotionRecyclerViewHolder holder, int position) {
         final Product product = products.get(position);
+
+        Bundle bundle=new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,product.getProductType().toString());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID,product.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,product.getName());
+        bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(product.getPrice()));
+
+        firebaseAnalytics.logEvent("view_promotion",bundle);
 
         final Promotion promotion= product.getPromotion();
 
@@ -99,6 +114,15 @@ public class PromotionRecyclerViewAdapter extends RecyclerView.Adapter<Promotion
             @Override
             public void onClick(View view) {
                 View dialogView= LayoutInflater.from(context).inflate(R.layout.layout_promotion_list_popup,null);
+
+                Bundle bundle=new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,product.getProductType().toString());
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID,product.getId());
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,product.getName());
+                bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(product.getPrice()));
+
+                firebaseAnalytics.logEvent("select_promotion",bundle);
 
                 MaterialAlertDialogBuilder builder=new MaterialAlertDialogBuilder(context);
                 builder.setView(dialogView);
