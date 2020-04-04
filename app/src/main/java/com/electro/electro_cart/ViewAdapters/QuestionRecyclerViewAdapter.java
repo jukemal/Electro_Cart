@@ -43,12 +43,20 @@ import java.util.List;
 
 import lombok.SneakyThrows;
 
+/*
+Recyclerview for displaying questions in product page
+ */
 public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    Context context;
-    List<Question> questionList;
-    String id;
+    private Context context;
+    private List<Question> questionList;
+    private String id;
 
+    /*
+    Contains two layouts.
+
+    One for adding questions and one for displaying existing questions.
+     */
     private static final int ADD_QUESTION_LAYOUT = 0;
     private static final int QUESTION_LAYOUT = 1;
 
@@ -103,6 +111,9 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             question = questionList.get(position);
         }
 
+        /*
+        Layout for adding questions.
+         */
         if (holder.getItemViewType() == ADD_QUESTION_LAYOUT) {
             AddQuestionLayoutViewHolder addQuestionLayoutViewHolder=(AddQuestionLayoutViewHolder)holder;
 
@@ -151,6 +162,10 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
             });
         } else {
+
+            /*
+            Layout for displaying questions.
+             */
             QuestionLayoutViewHolder questionLayoutViewHolder = (QuestionLayoutViewHolder) holder;
 
             questionLayoutViewHolder.textViewVotes.setText(String.valueOf(question.getVotes()));
@@ -160,6 +175,9 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm");
             String date = simpleDateFormat.format(question.getTimestamp());
 
+            /*
+            Setting delete button visible for questions added by currently logged in user.
+             */
             collectionReferenceUser.document(question.getOwnerId()).get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -180,6 +198,9 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             questionLayoutViewHolder.recyclerView.setHasFixedSize(true);
             questionLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
+            /*
+            Setting up AnswerRecyclerview for displaying answers for each question.
+             */
             Question finalQuestion1 = question;
             collectionReferenceQuestions.document(question.getId()).collection("answers")
                     .get()
@@ -205,6 +226,9 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
             Question finalQuestion = question;
 
+            /*
+            Up vote button for question.
+             */
             questionLayoutViewHolder.imageViewUpVote.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -227,6 +251,9 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
             });
 
+            /*
+            Down vote button for question.
+             */
             questionLayoutViewHolder.imageViewDownVote.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -250,6 +277,9 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
             });
 
+            /*
+            Delete button or question
+             */
             questionLayoutViewHolder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -303,6 +333,9 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     }
 
+    /*
+    Innerclass for add question layout.
+     */
     public class AddQuestionLayoutViewHolder extends RecyclerView.ViewHolder {
 
         TextInputEditText textInputEditTextQuestion;
@@ -318,6 +351,9 @@ public class QuestionRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
+    /*
+    Innerclass for question layout.
+     */
     public class QuestionLayoutViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageViewUpVote;

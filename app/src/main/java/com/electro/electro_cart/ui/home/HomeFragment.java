@@ -31,9 +31,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Class for Home
+ * */
 public class HomeFragment extends Fragment {
 
-    NavController navController;
+    private NavController navController;
 
     private RecyclerView recyclerView;
     private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
@@ -56,6 +59,9 @@ public class HomeFragment extends Fragment {
 
         final List<Product> productList = new ArrayList<>();
 
+        /*
+         * Get all products
+         * */
         collectionReference.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -66,20 +72,26 @@ public class HomeFragment extends Fragment {
                                 productList.add(p);
                             }
 
+                            /*
+                             * Setting up recyclerview.
+                             * */
                             homeRecyclerViewAdapter=new HomeRecyclerViewAdapter(getActivity(),productList,navController);
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setAdapter(homeRecyclerViewAdapter);
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.GONE);
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
             }
         });
 
+        /*
+         * Pull down to refresh layout.
+         * */
         SwipeRefreshLayout swipeRefreshLayout=root.findViewById(R.id.swipe_refresh_home);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

@@ -41,6 +41,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * Class for tracking
+ */
 public class TrackingFragment extends Fragment {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();

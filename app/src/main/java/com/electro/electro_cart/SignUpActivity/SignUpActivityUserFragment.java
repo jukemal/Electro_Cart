@@ -29,6 +29,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/*
+ * Class for user fragment of the signup activity
+ * */
 public class SignUpActivityUserFragment extends Fragment {
 
     private FirebaseAnalytics firebaseAnalytics;

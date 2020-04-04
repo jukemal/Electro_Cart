@@ -38,6 +38,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ *Class for product page.
+ */
 public class ProductFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -81,6 +84,9 @@ public class ProductFragment extends Fragment {
                                 Product p = product.toObject(Product.class);
                                 productList.add(p);
 
+                                /*
+                                 *Analytics for view item event.
+                                 */
                                 if (p.getId().equals(id)){
                                     Bundle bundle=new Bundle();
                                     bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");

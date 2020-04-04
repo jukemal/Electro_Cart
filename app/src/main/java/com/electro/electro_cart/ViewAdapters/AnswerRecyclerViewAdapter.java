@@ -31,14 +31,25 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
+/*
+ *This is the recyclerview for answers section in questions which is included in the Product page.
+ *
+ * Contains two layouts.
+ *
+ * Layout for adding a answer and for displaying existing answers.
+ */
 public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    Context context;
-    List<Answer> answerList;
-    String id;
-    String questionId;
+    private Context context;
+    private List<Answer> answerList;
+    private String id;
+    private String questionId;
 
+    /*
+    * Layout types
+    * */
     private static final int ADD_ANSWER_LAYOUT = 0;
     private static final int ANSWER_LAYOUT = 1;
 
@@ -50,13 +61,12 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private final CollectionReference collectionReferenceUser = db.collection("users");
 
-
     private final DocumentReference documentReferenceUser = db.collection("users")
             .document(firebaseAuth.getCurrentUser().getUid());
 
     private final CollectionReference collectionReferenceAnswer;
 
-    public AnswerRecyclerViewAdapter(Context context, List<Answer> answerList, String id, String questionId) {
+   public AnswerRecyclerViewAdapter(Context context, List<Answer> answerList, String id, String questionId) {
         this.context = context;
         this.answerList = answerList;
         this.id = id;
@@ -66,7 +76,9 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .document(questionId).collection("answers");
     }
 
-
+    /**
+     * Assigning appropriate layout for given viewType.
+     */
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -95,6 +107,11 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             answer = answerList.get(position);
         }
 
+        /*
+         * Add answer layout
+         *
+         * Answer added by the user is inserted to the database.
+         */
         if (holder.getItemViewType() == ADD_ANSWER_LAYOUT) {
             AddAnswerViewHolder addAnswerViewHolder = (AddAnswerViewHolder) holder;
 
@@ -113,6 +130,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
                                         Log.e("Answer Add", "DocumentSnapshot written with ID: " + documentReference.getId());
+
                                         documentReference.get()
                                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                     @Override
@@ -124,7 +142,7 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                                                             addAnswerViewHolder.textInputEditTextAnswer.setText("");
                                                             notifyDataSetChanged();
                                                         } else {
-
+                                                            Log.e("answer Add", "Error adding document");
                                                         }
                                                     }
                                                 });
@@ -141,11 +159,14 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 }
             });
         } else {
+            /*
+             *Layout for displaying existing answers.
+             */
             AnswerViewHolder answerViewHolder = (AnswerViewHolder) holder;
 
             answerViewHolder.textViewAnswer.setText(answer.getAnswer());
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm", Locale.ENGLISH);
             String date = simpleDateFormat.format(answer.getTimestamp());
 
             collectionReferenceUser.document(answer.getOwnerId()).get()
@@ -165,6 +186,9 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         }
                     });
 
+            /*
+            Deleting answers
+             */
             Answer finalAnswer = answer;
             answerViewHolder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -210,6 +234,12 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         return answerList.size() + 1;
     }
 
+    /*
+    Return layout type according to the position.
+
+    At the end of the list add answer layout.
+    Otherwise displaying existing answers.
+     */
     @Override
     public int getItemViewType(int position) {
         if (position == answerList.size())
@@ -217,6 +247,9 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         else return ANSWER_LAYOUT;
     }
 
+    /*
+    Innerclass for answer layout.
+     */
     public class AnswerViewHolder extends RecyclerView.ViewHolder {
 
         TextView textViewAnswer;
@@ -232,6 +265,9 @@ public class AnswerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /*
+    Innerclass for add answer layout.
+     */
     public class AddAnswerViewHolder extends RecyclerView.ViewHolder {
 
         TextInputEditText textInputEditTextAnswer;

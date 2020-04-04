@@ -20,6 +20,9 @@ import com.electro.electro_cart.models.Product;
 
 import java.util.List;
 
+/*
+ *Class for product list.
+ */
 public class GenericProductListFragment extends Fragment {
 
     private RecyclerView recyclerView;

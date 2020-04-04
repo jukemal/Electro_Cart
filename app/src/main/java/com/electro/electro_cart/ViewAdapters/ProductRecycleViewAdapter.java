@@ -72,6 +72,9 @@ import java.util.Random;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/**
+ *
+ */
 public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
@@ -930,6 +933,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /**
+     *
+     */
     public class RatingLayoutViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;

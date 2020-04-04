@@ -30,6 +30,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Class for transaction history.
+ */
 public class TransactionHistoryStoreFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -60,6 +63,9 @@ public class TransactionHistoryStoreFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        /*
+         * All the purchases made by users that are related to currently logged in store is fetched and displayed in a list.
+         */
         collectionReferenceUser
                 .whereEqualTo("userType", EnumUserType.USER)
                 .get()

@@ -26,6 +26,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/*
+ * Class for store profile.
+ * */
 public class ProfileStoreFragment extends Fragment {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -46,6 +49,9 @@ public class ProfileStoreFragment extends Fragment {
 
         Button buttonLogout=root.findViewById(R.id.logout_profile_store);
 
+        /*
+         * Details for the currently logged in store is fetched and displayed.
+         * */
         documentReferenceUser.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -71,6 +77,9 @@ public class ProfileStoreFragment extends Fragment {
                     }
                 });
 
+        /*
+         * Log out button.
+         * */
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

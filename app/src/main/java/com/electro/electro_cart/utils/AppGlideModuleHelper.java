@@ -13,6 +13,9 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.InputStream;
 
+/*
+ *Helper class for glide library.
+ */
 @GlideModule
 public class AppGlideModuleHelper extends AppGlideModule {
     @Override

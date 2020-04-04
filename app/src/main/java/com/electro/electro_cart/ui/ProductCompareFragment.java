@@ -28,6 +28,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ *Class for product compare fragment
+ */
 public class ProductCompareFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -54,6 +57,9 @@ public class ProductCompareFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        /*
+         *Display two products that been compared side by side.
+         */
         collectionReference.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

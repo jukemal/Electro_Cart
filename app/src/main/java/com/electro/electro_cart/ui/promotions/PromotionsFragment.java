@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -34,12 +35,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Class for Promotion
+ * */
 public class PromotionsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private PromotionRecyclerViewAdapter promotionRecyclerViewAdapter;
 
-    NavController navController;
+    private NavController navController;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -59,6 +63,9 @@ public class PromotionsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        /*
+         * Loading all products from the database and sending them to PromotionRecyclerAdapter
+         * */
         collectionReferenceProduct
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -78,7 +85,8 @@ public class PromotionsFragment extends Fragment {
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setAdapter(promotionRecyclerViewAdapter);
                         }else {
-
+                            Log.e("User", "get failed with ", task.getException());
+                            Toast.makeText(getContext(),"No Internet Connection. Try Again",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
