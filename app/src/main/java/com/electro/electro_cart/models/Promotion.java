@@ -12,13 +12,13 @@ import lombok.Builder;
 public class Promotion implements Serializable {
 
     private String description;
-    private Timestamp endDate;
+    private Date endDate;
     private int discountPercentage;
 
     public Promotion() {
     }
 
-    public Promotion(String description, Timestamp endDate, int discountPercentage) {
+    public Promotion(String description, Date endDate, int discountPercentage) {
         this.description = description;
         this.endDate = endDate;
         this.discountPercentage = discountPercentage;
@@ -32,11 +32,11 @@ public class Promotion implements Serializable {
         this.description = description;
     }
 
-    public Timestamp getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Timestamp endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

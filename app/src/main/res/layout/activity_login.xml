@@ -42,7 +42,7 @@
             android:layout_marginTop="24dp"
             android:text="Facebook"
             app:backgroundTint="#3D5A96"
-            app:icon="@drawable/googleg_standard_color_18"
+            app:icon="@drawable/facebook"
             app:layout_constraintEnd_toStartOf="@+id/btnGoogleLogin"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread"

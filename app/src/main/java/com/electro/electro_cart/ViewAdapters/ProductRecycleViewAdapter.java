@@ -3,6 +3,7 @@ package com.electro.electro_cart.ViewAdapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.electro.electro_cart.R;
 import com.electro.electro_cart.models.CartItem;
 import com.electro.electro_cart.models.Product;
+import com.electro.electro_cart.models.Promotion;
 import com.electro.electro_cart.models.Question;
 import com.electro.electro_cart.models.Rating;
 import com.electro.electro_cart.models.User;
@@ -44,6 +46,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.ar.core.ArCoreApk;
 import com.google.firebase.Timestamp;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -77,6 +80,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     NavController navController;
 
     private ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface;
+
+    private FirebaseAnalytics firebaseAnalytics;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -114,6 +119,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         this.id = id;
         this.productRecycleViewAdapterClickInterface = productRecycleViewAdapterClickInterface;
         this.navController = navController;
+
+        firebaseAnalytics=FirebaseAnalytics.getInstance(context);
+        firebaseAnalytics.setUserId(firebaseAuth.getUid());
 
         documentReferenceProduct = collectionReferenceProduct.document(id);
         collectionReferenceQuestions=documentReferenceProduct.collection("questions");
@@ -241,6 +249,15 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     if (isChecked) {
+                        Bundle bundle=new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID,finalProduct1.getId());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,finalProduct1.getName());
+                        bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(finalProduct1.getPrice()));
+
+                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_TO_WISHLIST,bundle);
+
                         collectionReferenceFavourite.document(finalProduct1.getId()).update("favourite", "true")
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -274,7 +291,28 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             //Favourite End
             //------------------------------------------------------------------------------------------------------------
+            //Promotion
 
+            final Promotion promotion=product.getPromotion();
+
+            if (promotion==null){
+                mainLayoutViewHolder.textViewPrice.setText(String.valueOf(product.getPrice()) + " LKR");
+            }else {
+                int price=product.getPrice()*(100-promotion.getDiscountPercentage())/100;
+
+                mainLayoutViewHolder.textViewPrice.setText(String.valueOf(price)+" LKR");
+
+                mainLayoutViewHolder.textViewPriceDiscount.setText(String.valueOf(product.getPrice())+" LKR");
+
+                mainLayoutViewHolder.textViewPriceDiscount.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+
+                mainLayoutViewHolder.textViewPriceDiscount.setVisibility(View.VISIBLE);
+
+                mainLayoutViewHolder.textViewPromotionBadge.setVisibility(View.VISIBLE);
+            }
+
+            //Promotion End
+            //------------------------------------------------------------------------------------------------------------
             // AR
 
             ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(context);
@@ -301,10 +339,6 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 mainLayoutViewHolder.textViewDescription.setText(product.getDescription());
             }
 
-            //Price
-
-            mainLayoutViewHolder.textViewPrice.setText(String.valueOf(product.getPrice()) + " LKR");
-
             // Rating Bar
 
             mainLayoutViewHolder.ratingBar.setRating(product.getRating());
@@ -319,7 +353,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     View popupView = LayoutInflater.from(context).inflate(R.layout.layout_product_compare_popup, null);
                     PopupWindow popupWindow = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, true);
                     popupWindow.setAnimationStyle(R.style.Animation_Design_BottomSheetDialog);
-                    popupView.setBackground(new ColorDrawable(Color.parseColor("#e2e2e2")));
+                    popupView.setBackground(new ColorDrawable(context.getResources().getColor(R.color.colorPrimary)));
                     popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
                     ImageView imageViewImageProductCompare = popupView.findViewById(R.id.imageView_image_product_compare);
@@ -417,6 +451,15 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        Bundle bundle=new Bundle();
+                                        bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                                        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
+                                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID,finalProduct1.getId());
+                                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,finalProduct1.getName());
+                                        bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(finalProduct1.getPrice()));
+
+                                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_TO_CART,bundle);
+
                                         Toast.makeText(context, "Added to Cart", Toast.LENGTH_SHORT).show();
                                         Navigation.findNavController(view).navigate(R.id.action_to_navigation_cart);
                                     }
@@ -436,6 +479,15 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     collectionReferenceCart.document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            Bundle bundle=new Bundle();
+                            bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_ID,finalProduct1.getId());
+                            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,finalProduct1.getName());
+                            bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(finalProduct1.getPrice()));
+
+                            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.REMOVE_FROM_CART,bundle);
+
                             Toast.makeText(context, "Removed from Cart.", Toast.LENGTH_SHORT).show();
                             productRecycleViewAdapterClickInterface.RemoveFromCartClicked();
                         }
@@ -778,6 +830,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         Button buttonCompareProducts;
         Chip chipStore;
         LinearLayout linearLayoutStore;
+        TextView textViewPromotionBadge;
+        TextView textViewPriceDiscount;
 
         public MainLayoutViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -798,6 +852,8 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             buttonCompareProducts = itemView.findViewById(R.id.btn_compare_product);
             chipStore=itemView.findViewById(R.id.store_name_product);
             linearLayoutStore=itemView.findViewById(R.id.Linear_layout_available_stores);
+            textViewPromotionBadge=itemView.findViewById(R.id.promotion_badge);
+            textViewPriceDiscount=itemView.findViewById(R.id.textPriceDiscount);
         }
     }
 

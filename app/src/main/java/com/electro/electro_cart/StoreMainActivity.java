@@ -31,7 +31,7 @@ public class StoreMainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_view_store);
 
         appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_store_home, R.id.navigation_store_promotion, R.id.navigation_store_notification,R.id.navigation_store_profile)
+                R.id.navigation_store_home, R.id.navigation_store_promotion,R.id.navigation_store_profile)
                 .setDrawerLayout(drawer).build();
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_store);

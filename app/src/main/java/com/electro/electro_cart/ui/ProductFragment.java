@@ -26,6 +26,8 @@ import com.electro.electro_cart.models.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,7 +43,9 @@ public class ProductFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProductRecycleViewAdapter productRecycleViewAdapter;
 
-    NavController navController;
+    private NavController navController;
+
+    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -51,6 +55,9 @@ public class ProductFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_product, container, false);
+
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+        firebaseAnalytics.setUserId(firebaseAuth.getUid());
 
         final String id = getArguments().getString("id");
         Log.e("ID",id);
@@ -73,6 +80,17 @@ public class ProductFragment extends Fragment {
                             for (QueryDocumentSnapshot product : task.getResult()) {
                                 Product p = product.toObject(Product.class);
                                 productList.add(p);
+
+                                if (p.getId().equals(id)){
+                                    Bundle bundle=new Bundle();
+                                    bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
+                                    bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,p.getProductType().toString());
+                                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID,p.getId());
+                                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME,p.getName());
+                                    bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(p.getPrice()));
+
+                                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM,bundle);
+                                }
                             }
 
                             productRecycleViewAdapter = new ProductRecycleViewAdapter(getActivity(), productList, id, navController,new ProductRecycleViewAdapterClickInterface() {

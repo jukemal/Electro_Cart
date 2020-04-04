@@ -17,12 +17,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private FirebaseAnalytics firebaseAnalytics;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -35,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         firebaseAuth = FirebaseAuth.getInstance();
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
@@ -60,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                firebaseAnalytics.setUserId(task.getResult().getUser().getUid());
 
                                 db.collection("users").document(task.getResult().getUser().getUid()).get()
                                         .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -78,6 +84,11 @@ public class LoginActivity extends AppCompatActivity {
                                                             startActivity(intent);
                                                             finish();
                                                         } else {
+
+                                                            Bundle bundle = new Bundle();
+                                                            bundle.putString(FirebaseAnalytics.Param.METHOD,"email");
+                                                            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN,bundle);
+
                                                             Toast.makeText(LoginActivity.this, "Login Successful.", Toast.LENGTH_SHORT).show();
                                                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                                             startActivity(intent);
