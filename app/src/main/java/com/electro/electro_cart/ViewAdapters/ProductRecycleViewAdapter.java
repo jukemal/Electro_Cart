@@ -91,6 +91,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private final CollectionReference collectionReferenceProduct = db.collection("products");
 
+    private final DocumentReference documentReferenceCurrentUser=db.collection("users")
+            .document(firebaseAuth.getCurrentUser().getUid());
+
     private final CollectionReference collectionReferenceCart = db.collection("users")
             .document(firebaseAuth.getCurrentUser().getUid())
             .collection("cart");
@@ -638,23 +641,58 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             recommendedLayoutViewHolder.textView.setText("Recommended Products");
 
-            Collections.shuffle(products);
+            Product finalProduct3 = product;
+            documentReferenceCurrentUser
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Log.d("Product Recommendation", "DocumentSnapshot data: " + document.getData());
 
-            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, products);
+                                    User user=document.toObject(User.class);
 
-            recommendedLayoutViewHolder.recyclerView.setHasFixedSize(true);
-            recommendedLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-            recommendedLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+                                    if (user.getRecommendationList()!=null){
+                                        List<String> recommendationList=user.getRecommendationList();
 
-            recommendedLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Bundle bundle=new Bundle();
-                    bundle.putString("header","Recommended Products");
-                    bundle.putSerializable("productList", (Serializable) products);
-                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
-                }
-            });
+                                        List<Product> recommendedProductList=new ArrayList<>();
+
+                                        for (String s:recommendationList){
+                                            for (Product p:products){
+                                                if (s.equals(p.getId())&&!s.equals(finalProduct3.getId())){
+                                                    recommendedProductList.add(p);
+                                                }
+                                            }
+                                        }
+
+                                        HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, recommendedProductList);
+
+                                        recommendedLayoutViewHolder.recyclerView.setHasFixedSize(true);
+                                        recommendedLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                        recommendedLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+                                        recommendedLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Bundle bundle=new Bundle();
+                                                bundle.putString("header","Recommended Products");
+                                                bundle.putSerializable("productList", (Serializable) products);
+                                                navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                                            }
+                                        });
+                                    }else {
+                                        recommendedLayoutViewHolder.itemView.setVisibility(View.GONE);
+                                    }
+                                } else {
+                                    Log.d("Product Recommendation", "No such document");
+                                }
+                            } else {
+                                Log.d("Product Recommendation", "get failed with ", task.getException());
+                            }
+                        }
+                    });
         }else if(holder.getItemViewType()==SPONSORED_LAYOUT){
             SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
 

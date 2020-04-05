@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class AddDataFragment extends Fragment {
 
@@ -58,16 +59,54 @@ public class AddDataFragment extends Fragment {
 
         final String ownerId=firebaseAuth.getCurrentUser().getUid();
 
+        Random random=new Random();
+
         final List<Rating> ratings = new ArrayList<>();
 
-        final Rating rating = Rating.builder()
+        final Rating rating1 = Rating.builder()
                 .header("Best of the best")
                 .description("Brought this one last week. Totally happy with the result.")
-                .score(5)
+                .score(random.nextInt(3+1)+2)
                 .ownerId(ownerId)
                 .votes(12).build();
 
-        ratings.add(rating);
+        ratings.add(rating1);
+
+        final Rating rating2 = Rating.builder()
+                .header("Best of the best")
+                .description("Brought this one last week. Totally happy with the result.")
+                .score(random.nextInt(3+1)+2)
+                .ownerId(ownerId)
+                .votes(12).build();
+
+        ratings.add(rating2);
+
+        final Rating rating3 = Rating.builder()
+                .header("Best of the best")
+                .description("Brought this one last week. Totally happy with the result.")
+                .score(random.nextInt(3+1)+2)
+                .ownerId(ownerId)
+                .votes(12).build();
+
+        ratings.add(rating3);
+
+        final Rating rating4 = Rating.builder()
+                .header("Best of the best")
+                .description("Brought this one last week. Totally happy with the result.")
+                .score(random.nextInt(3+1)+2)
+                .ownerId(ownerId)
+                .votes(12).build();
+
+        ratings.add(rating4);
+
+        final Rating rating5 = Rating.builder()
+                .header("Best of the best")
+                .description("Brought this one last week. Totally happy with the result.")
+                .score(random.nextInt(3+1)+2)
+                .ownerId(ownerId)
+                .votes(12).build();
+
+        ratings.add(rating5);
 
         final List<Answer> answerList=new ArrayList<>();
 
