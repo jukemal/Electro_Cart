@@ -111,6 +111,7 @@ public class SignUpActivityStoreFragment extends Fragment {
                                             .name(name)
                                             .points("0")
                                             .userType(EnumUserType.STORE)
+                                            .recommendationList(null)
                                             .build();
                                 }
 

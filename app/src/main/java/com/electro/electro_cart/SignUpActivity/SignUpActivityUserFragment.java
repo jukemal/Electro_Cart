@@ -126,6 +126,7 @@ public class SignUpActivityUserFragment extends Fragment {
                                             .name(name)
                                             .points("0")
                                             .userType(EnumUserType.USER)
+                                            .recommendationList(null)
                                             .build();
                                 }
 
