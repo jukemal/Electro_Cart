@@ -14,6 +14,9 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+/*
+Main screen for store.
+ */
 public class StoreMainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;

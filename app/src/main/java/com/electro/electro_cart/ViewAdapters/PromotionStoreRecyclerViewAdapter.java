@@ -3,8 +3,6 @@ package com.electro.electro_cart.ViewAdapters;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,12 +42,15 @@ import lombok.SneakyThrows;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for store promotion interface.
+ */
 public class PromotionStoreRecyclerViewAdapter extends RecyclerView.Adapter<PromotionStoreRecyclerViewAdapter.PromotionStoreRecyclerViewHolder> {
 
     private static final String TAG = "Promotion";
     private Context context;
     private List<Product> productList;
-    PromotionStoreRecyclerViewAdapterClickInterface promotionStoreRecyclerViewAdapterClickInterface;
+    private PromotionStoreRecyclerViewAdapterClickInterface promotionStoreRecyclerViewAdapterClickInterface;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -104,6 +105,9 @@ public class PromotionStoreRecyclerViewAdapter extends RecyclerView.Adapter<Prom
             holder.linearLayout.setVisibility(View.VISIBLE);
         }
 
+        /*
+        Dialog for add new promotion.
+         */
         holder.buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,6 +206,9 @@ public class PromotionStoreRecyclerViewAdapter extends RecyclerView.Adapter<Prom
             }
         });
 
+        /*
+        Remove promotion
+         */
         holder.buttonRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -250,6 +257,9 @@ public class PromotionStoreRecyclerViewAdapter extends RecyclerView.Adapter<Prom
     }
 
 
+    /*
+    Innerclass for layout.
+     */
     public class PromotionStoreRecyclerViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageView;

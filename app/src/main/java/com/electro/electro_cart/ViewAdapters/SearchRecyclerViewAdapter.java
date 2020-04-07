@@ -40,6 +40,9 @@ import java.util.Map;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for search interface.
+ */
 public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.SearchRecyclerViewHolder> implements Filterable {
 
     private Context context;
@@ -198,6 +201,9 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         return productList.size();
     }
 
+    /*
+    Get typed string from search box and updating the list.
+     */
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -231,6 +237,9 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         };
     }
 
+    /*
+    Innerclass for layout.
+     */
     public class SearchRecyclerViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;

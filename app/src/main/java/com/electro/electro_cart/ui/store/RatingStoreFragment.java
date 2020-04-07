@@ -27,6 +27,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Class for Store ratings
+ */
 public class RatingStoreFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -49,6 +52,10 @@ public class RatingStoreFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        /*
+         * All products for the currently logged in shop is fetched and displayed in a list along with
+         * their respective ratings.
+         */
         collectionReferenceProduct
                 .whereEqualTo("storeId",firebaseAuth.getCurrentUser().getUid())
                 .get()

@@ -39,6 +39,9 @@ import java.util.Map;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for displaying cart list.
+ */
 public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerViewAdapter.CartRecyclerViewHolder> {
 
     private Context context;
@@ -48,7 +51,6 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
 
     private final CollectionReference collectionReferenceProduct = db.collection("products");
 
@@ -73,6 +75,9 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
     public void onBindViewHolder(@NonNull CartRecyclerViewAdapter.CartRecyclerViewHolder holder, int position) {
         final CartItem cartItem=cartItemList.get(position);
 
+        /*
+        Product details are loaded from the database for given cartList.
+         */
         collectionReferenceProduct.document(cartItem.getProductID())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -200,7 +205,7 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context,"ID not Found",Toast.LENGTH_SHORT);
+                Toast.makeText(context,"ID not Found",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -212,6 +217,9 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
         return cartItemList.size();
     }
 
+    /*
+    Inner class for view holder.
+     */
     public class CartRecyclerViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageView;

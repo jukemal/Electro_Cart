@@ -37,6 +37,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Recyclerview for Order History.
+
+This contains List of items bought for each purchase.
+ */
 public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderHistoryRecyclerViewAdapter.OrderHistoryRecyclerViewHolder> {
 
     Context context;
@@ -116,6 +121,9 @@ public class OrderHistoryRecyclerViewAdapter extends RecyclerView.Adapter<OrderH
     }
 }
 
+/*
+Inner Recyclerview for order history.
+ */
 class OrderHistoryRecyclerViewAdapterInner extends RecyclerView.Adapter<OrderHistoryRecyclerViewAdapterInner.OrderHistoryRecyclerViewHolderInner>{
 
 

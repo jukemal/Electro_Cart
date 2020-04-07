@@ -22,6 +22,9 @@ import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for product compare interface.
+ */
 public class ProductCompareViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     Context context;
@@ -32,6 +35,9 @@ public class ProductCompareViewAdapter extends RecyclerView.Adapter<RecyclerView
     LinkedHashMap<String,Object> product1SpecificationMap;
     LinkedHashMap<String,Object> product2SpecificationMap;
 
+    /*
+    Recyclerview consists of three layouts.
+     */
     private static final int HEADER = 0;
     private static final int TABLE_HEADER = 1;
     private static final int CONTENT = 2;
@@ -70,6 +76,10 @@ public class ProductCompareViewAdapter extends RecyclerView.Adapter<RecyclerView
         return viewHolder;
     }
 
+    /*
+    First two layouts are render once.
+    Then for each field third layout is generated.
+     */
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType()==HEADER){
@@ -111,8 +121,6 @@ public class ProductCompareViewAdapter extends RecyclerView.Adapter<RecyclerView
             tableHeader.textViewTableHeader2.setText(productList.get(1).getName());
 
         }else {
-/*holder.textViewID.setText(specificationMap.keySet().toArray()[position].toString().toUpperCase());
-        holder.textViewName.setText(specificationMap.values().toArray()[position].toString());*/
 
             final ProductContent productContent=(ProductContent)holder;
 

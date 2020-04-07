@@ -43,6 +43,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Class for Profile
+ * */
 public class ProfileFragment extends Fragment {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -63,6 +66,9 @@ public class ProfileFragment extends Fragment {
 
         Button buttonLogout=root.findViewById(R.id.logout_profile);
 
+        /*
+         * Load details for currently logged in user.
+         * */
         documentReferenceUser.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -89,6 +95,9 @@ public class ProfileFragment extends Fragment {
                     }
                 });
 
+        /*
+         * Logout action.
+         * */
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

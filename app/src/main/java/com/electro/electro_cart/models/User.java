@@ -4,6 +4,7 @@ import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Builder;
 
@@ -16,12 +17,13 @@ public class User implements Serializable {
     private String location;
     private String points;
     private EnumUserType userType;
+    private List<String> recommendationList;
     private @ServerTimestamp Date timestamp;
 
     public User() {
     }
 
-    public User(String id, String email, String telephoneNumber, String name, String location, String points, EnumUserType userType, Date timestamp) {
+    public User(String id, String email, String telephoneNumber, String name, String location, String points, EnumUserType userType, List<String> recommendationList, Date timestamp) {
         this.id = id;
         this.email = email;
         this.telephoneNumber = telephoneNumber;
@@ -29,6 +31,7 @@ public class User implements Serializable {
         this.location = location;
         this.points = points;
         this.userType = userType;
+        this.recommendationList = recommendationList;
         this.timestamp = timestamp;
     }
 
@@ -88,6 +91,14 @@ public class User implements Serializable {
         this.userType = userType;
     }
 
+    public List<String> getRecommendationList() {
+        return recommendationList;
+    }
+
+    public void setRecommendationList(List<String> recommendationList) {
+        this.recommendationList = recommendationList;
+    }
+
     public Date getTimestamp() {
         return timestamp;
     }
@@ -106,6 +117,7 @@ public class User implements Serializable {
                 ", location='" + location + '\'' +
                 ", points='" + points + '\'' +
                 ", userType=" + userType +
+                ", recommendationList=" + recommendationList +
                 ", timestamp=" + timestamp +
                 '}';
     }

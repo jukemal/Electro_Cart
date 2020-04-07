@@ -2,7 +2,6 @@ package com.electro.electro_cart.ViewAdapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -10,12 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -55,29 +53,26 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.synnapps.carouselview.CarouselView;
-import com.synnapps.carouselview.ImageListener;
-
-import android.view.ViewGroup.LayoutParams;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/**
+ *Recyclerview for product page.
+ */
 public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private List<Product> products;
     private String id;
-    NavController navController;
+    private NavController navController;
 
     private ProductRecycleViewAdapterClickInterface productRecycleViewAdapterClickInterface;
 
@@ -90,6 +85,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
     private final CollectionReference collectionReferenceProduct = db.collection("products");
+
+    private final DocumentReference documentReferenceCurrentUser=db.collection("users")
+            .document(firebaseAuth.getCurrentUser().getUid());
 
     private final CollectionReference collectionReferenceCart = db.collection("users")
             .document(firebaseAuth.getCurrentUser().getUid())
@@ -105,6 +103,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private final DocumentReference documentReferenceProduct;
 
+    /*
+    Contains these layout types.
+     */
     private static final int MAIN_LAYOUT = 0;
     private static final int BOUGHT_TOGETHER_LAYOUT = 1;
     private static final int RECOMMENDED_LAYOUT = 2;
@@ -121,6 +122,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         this.navController = navController;
 
         firebaseAnalytics=FirebaseAnalytics.getInstance(context);
+
+        /*
+        Analytics Setting user.
+         */
         firebaseAnalytics.setUserId(firebaseAuth.getUid());
 
         documentReferenceProduct = collectionReferenceProduct.document(id);
@@ -185,6 +190,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
 
         if (holder.getItemViewType() == MAIN_LAYOUT) {
+            /*
+            Main Layout
+             */
 
             final MainLayoutViewHolder mainLayoutViewHolder = (MainLayoutViewHolder) holder;
 
@@ -249,6 +257,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     if (isChecked) {
+                        /*
+                        Analytics for add_to_favourite_event.
+                         */
                         Bundle bundle=new Bundle();
                         bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
                         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
@@ -451,6 +462,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+                                        /*
+                                        Analytics for add_to_cart event.
+                                         */
                                         Bundle bundle=new Bundle();
                                         bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
                                         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
@@ -479,6 +493,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                     collectionReferenceCart.document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            /*
+                            Analytics for remove_from_cart event.
+                             */
                             Bundle bundle=new Bundle();
                             bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
                             bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,finalProduct1.getProductType().toString());
@@ -589,6 +606,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             //----------------------------------------------------------------------------------------------------------
 
         }else if (holder.getItemViewType()==BOUGHT_TOGETHER_LAYOUT){
+            /*
+            Bought together layout
+             */
+
             BoughtTogetherLayoutViewHolder boughtTogetherLayoutViewHolder=(BoughtTogetherLayoutViewHolder)holder;
 
             Glide.with(context)
@@ -601,16 +622,6 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             boughtTogetherLayoutViewHolder.textViewName1.setText(product.getName());
             boughtTogetherLayoutViewHolder.textViewPrice1.setText(String.valueOf(product.getPrice())+" LKR");
-
-            Product finalProduct3 = product;
-            boughtTogetherLayoutViewHolder.linearLayoutProduct1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Bundle bundle=new Bundle();
-                    bundle.putString("id", finalProduct3.getId());
-                    Navigation.findNavController(view).navigate(R.id.action_to_navigation_product,bundle);
-                }
-            });
 
             Random random=new Random();
 
@@ -644,28 +655,71 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
             });
 
         }else if (holder.getItemViewType()==RECOMMENDED_LAYOUT){
+            /*
+            Layout for recommended products.
+             */
+
             RecommendedLayoutViewHolder recommendedLayoutViewHolder = (RecommendedLayoutViewHolder) holder;
 
             recommendedLayoutViewHolder.textView.setText("Recommended Products");
 
-            Collections.shuffle(products);
+            Product finalProduct3 = product;
+            documentReferenceCurrentUser
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    Log.d("Product Recommendation", "DocumentSnapshot data: " + document.getData());
 
-            HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, products);
+                                    User user=document.toObject(User.class);
 
-            recommendedLayoutViewHolder.recyclerView.setHasFixedSize(true);
-            recommendedLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-            recommendedLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+                                    if (user.getRecommendationList()!=null){
+                                        List<String> recommendationList=user.getRecommendationList();
 
-            recommendedLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Bundle bundle=new Bundle();
-                    bundle.putString("header","Recommended Products");
-                    bundle.putSerializable("productList", (Serializable) products);
-                    navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
-                }
-            });
+                                        List<Product> recommendedProductList=new ArrayList<>();
+
+                                        for (String s:recommendationList){
+                                            for (Product p:products){
+                                                if (s.equals(p.getId())&&!s.equals(finalProduct3.getId())){
+                                                    recommendedProductList.add(p);
+                                                }
+                                            }
+                                        }
+
+                                        HomeRowRecycleViewAdapter homeRowRecycleViewAdapter = new HomeRowRecycleViewAdapter(context, recommendedProductList);
+
+                                        recommendedLayoutViewHolder.recyclerView.setHasFixedSize(true);
+                                        recommendedLayoutViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                                        recommendedLayoutViewHolder.recyclerView.setAdapter(homeRowRecycleViewAdapter);
+
+                                        recommendedLayoutViewHolder.button.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Bundle bundle=new Bundle();
+                                                bundle.putString("header","Recommended Products");
+                                                bundle.putSerializable("productList", (Serializable) products);
+                                                navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
+                                            }
+                                        });
+                                    }else {
+                                        recommendedLayoutViewHolder.itemView.setVisibility(View.GONE);
+                                    }
+                                } else {
+                                    Log.d("Product Recommendation", "No such document");
+                                }
+                            } else {
+                                Log.d("Product Recommendation", "get failed with ", task.getException());
+                            }
+                        }
+                    });
         }else if(holder.getItemViewType()==SPONSORED_LAYOUT){
+            /*
+            Layout for Sponsored products.
+             */
+
             SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
 
             sponsoredLayoutViewHolder.textView.setText("Sponsored Products");
@@ -688,6 +742,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 }
             });
         }else if (holder.getItemViewType()==QUESTION_LAYOUT){
+            /*
+            Layout for Questions.
+             */
+
             QuestionLayoutViewHolder questionLayoutViewHolder=(QuestionLayoutViewHolder)holder;
 
             questionLayoutViewHolder.recyclerView.setHasFixedSize(true);
@@ -715,6 +773,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                         }
                     });
         }else if (holder.getItemViewType()==RANDOM_ITEM_LAYOUT){
+            /*
+            Layout for Random products.
+             */
+
             RandomLayoutViewHolder randomLayoutViewHolder = (RandomLayoutViewHolder) holder;
 
             randomLayoutViewHolder.textView.setText("Random Products");
@@ -737,6 +799,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 }
             });
         }else if (holder.getItemViewType()==RATING_LAYOUT){
+            /*
+            Layout for Ratings.
+             */
+
             RatingLayoutViewHolder ratingLayoutViewHolder=(RatingLayoutViewHolder) holder;
 
             ratingLayoutViewHolder.recyclerView.setHasFixedSize(true);
@@ -764,6 +830,10 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                         }
                     });
         }else {
+            /*
+            Layout for sponsored products.
+             */
+
             SponsoredLayoutViewHolder sponsoredLayoutViewHolder = (SponsoredLayoutViewHolder) holder;
 
             sponsoredLayoutViewHolder.textView.setText("Sponsored Products");
@@ -788,6 +858,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /*
+    Returns layout type based on position.
+     */
     @Override
     public int getItemViewType(int position) {
         if (position == 0)
@@ -812,6 +885,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         return 7;
     }
 
+    /*
+    Inner class for main layout.
+     */
     public class MainLayoutViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageViewImage;
@@ -857,6 +933,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /*
+    Inner class for bought together layout.
+     */
     public class BoughtTogetherLayoutViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout linearLayoutProduct1;
@@ -884,6 +963,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /*
+    Inner class for recommended layout.
+     */
     public class RecommendedLayoutViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -899,6 +981,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /*
+    Inner class for sponsored layout.
+     */
     public class SponsoredLayoutViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -914,6 +999,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /*
+    Inner class for question layout.
+     */
     public class QuestionLayoutViewHolder extends RecyclerView.ViewHolder{
 
         RecyclerView recyclerView;
@@ -925,6 +1013,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /*
+    Inner class for random product layout.
+     */
     public class RandomLayoutViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -940,6 +1031,9 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /*
+    Inner class for ratings layout.
+     */
     public class RatingLayoutViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;

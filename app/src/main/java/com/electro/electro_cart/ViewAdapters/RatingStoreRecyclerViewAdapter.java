@@ -30,6 +30,9 @@ import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for store rating.
+ */
 public class RatingStoreRecyclerViewAdapter extends RecyclerView.Adapter<RatingStoreRecyclerViewAdapter.RatingStoreRecyclerViewHolder> {
 
     private Context context;

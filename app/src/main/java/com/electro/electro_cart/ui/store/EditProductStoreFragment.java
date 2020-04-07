@@ -34,6 +34,9 @@ import java.util.Map;
 
 import lombok.SneakyThrows;
 
+/*
+ * Class for add and update products interface.
+ * */
 public class EditProductStoreFragment extends Fragment {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -52,6 +55,9 @@ public class EditProductStoreFragment extends Fragment {
 
         Button buttonUpdate=root.findViewById(R.id.btn_update_product_store_edit_product);
 
+        /*
+         * Fetching relevant product from the database.
+         * */
         collectionReference.document(id)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -61,6 +67,9 @@ public class EditProductStoreFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
+                            /*
+                             * For each field in the product, a label and a text field is auto generated and added to the layout.
+                             * */
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 Log.e(TAG, "DocumentSnapshot data: " + document.getData());
@@ -106,6 +115,10 @@ public class EditProductStoreFragment extends Fragment {
                                     }
 
                                 }
+
+                                /*
+                                 * Code for Update Product
+                                 * */
 
                                 buttonUpdate.setVisibility(View.VISIBLE);
 

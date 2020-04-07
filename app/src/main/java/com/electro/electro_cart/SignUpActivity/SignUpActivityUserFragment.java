@@ -29,6 +29,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/*
+ * Class for user fragment of the signup activity
+ * */
 public class SignUpActivityUserFragment extends Fragment {
 
     private FirebaseAnalytics firebaseAnalytics;
@@ -104,6 +107,9 @@ public class SignUpActivityUserFragment extends Fragment {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
+                                /*
+                                Analytics for setting user and logging sign up event.
+                                 */
                                 firebaseAnalytics.setUserId(user.getUid());
 
                                 Bundle bundle=new Bundle();
@@ -123,6 +129,7 @@ public class SignUpActivityUserFragment extends Fragment {
                                             .name(name)
                                             .points("0")
                                             .userType(EnumUserType.USER)
+                                            .recommendationList(null)
                                             .build();
                                 }
 

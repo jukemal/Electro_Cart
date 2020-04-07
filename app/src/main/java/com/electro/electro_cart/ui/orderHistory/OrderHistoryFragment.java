@@ -32,12 +32,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Class for Order History
+ * */
 public class OrderHistoryFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private OrderHistoryRecyclerViewAdapter orderHistoryRecyclerViewAdapter;
 
-    ProgressBar progressBar;
+    private ProgressBar progressBar;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -59,6 +62,9 @@ public class OrderHistoryFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        /*
+         * Getting order history for currently logged in user.
+         * */
         collectionReferenceOrderHistory.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -79,7 +85,7 @@ public class OrderHistoryFragment extends Fragment {
                         }else {
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+                            Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });

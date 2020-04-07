@@ -1,6 +1,5 @@
 package com.electro.electro_cart.ui;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +45,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Class for cart fragment
+ */
 public class CartFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -78,6 +80,11 @@ public class CartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_cart, container, false);
 
+        /*
+         *Analytics for cart view
+         *
+         * Setting user and logging view_cart event.
+         */
         firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         firebaseAnalytics.setUserId(firebaseAuth.getUid());
 
@@ -103,6 +110,9 @@ public class CartFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        /*
+         *Cart for currently logged in user is fetched and displaed.
+         */
         collectionReference.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -160,6 +170,9 @@ public class CartFragment extends Fragment {
                     }
                 });
 
+        /*
+         *Proceed button
+         */
         buttonProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -172,12 +185,18 @@ public class CartFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                /*
+                                 *Analytics for purchase event.
+                                 */
                                 Bundle bundle=new Bundle();
                                 bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
                                 bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(total));
 
                                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE,bundle);
 
+                                /*
+                                 *Analytics for earn_virtual_currency event.
+                                 */
                                 Bundle bundlePoints=new Bundle();
                                 bundlePoints.putString(FirebaseAnalytics.Param.VIRTUAL_CURRENCY_NAME,"Points");
                                 bundlePoints.putString(FirebaseAnalytics.Param.VALUE,"50");
@@ -187,6 +206,9 @@ public class CartFragment extends Fragment {
                                 Map<String, Object> data = new HashMap<>();
                                 data.put("orderStatus", EnumOrderTrackingStatus.ORDER_ACCEPTED);
 
+                                /*
+                                 *Setting order status in the database
+                                 */
                                 collectionReferenceOrderTracking.add(data)
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
@@ -206,6 +228,9 @@ public class CartFragment extends Fragment {
                                                                     OrderHistory orderHistory = OrderHistory.builder()
                                                                             .cartItemList(cartItemList).build();
 
+                                                                    /*
+                                                                     *Adding purchased items details to the order history.
+                                                                     */
                                                                     if (!cartItemList.isEmpty()) {
                                                                         collectionReferenceOrderHistory.add(orderHistory)
                                                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

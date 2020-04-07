@@ -60,6 +60,9 @@ public class FavouriteFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        /*
+         * Loading favourite products for currently logged in user.
+         * */
         collectionReferenceFavourite
                 .whereEqualTo("favourite", "true")
                 .get()
@@ -71,7 +74,9 @@ public class FavouriteFragment extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.e("Favourite Fragment", document.getId() + " => " + document.getData());
-
+                                /*
+                                 * Then for each item loading product details.
+                                 * */
                                 collectionReferenceProduct.document(document.getId())
                                         .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
@@ -92,7 +97,9 @@ public class FavouriteFragment extends Fragment {
                                     }
                                 });
                             }
-
+                            /*
+                             * Setup recyclerview with product list.
+                             * */
                             productListRecycleViewAdapter=new ProductListRecycleViewAdapter(getActivity(),productList);
                             progressBar.setVisibility(View.GONE);
                             recyclerView.setAdapter(productListRecycleViewAdapter);
@@ -104,6 +111,9 @@ public class FavouriteFragment extends Fragment {
                     }
                 });
 
+        /*
+         * Code for pull down to refresh
+         * */
         SwipeRefreshLayout swipeRefreshLayout=root.findViewById(R.id.swipe_refresh_favourite);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

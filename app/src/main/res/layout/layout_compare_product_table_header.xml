@@ -5,7 +5,8 @@
     android:gravity="center"
     android:orientation="horizontal"
     android:layout_marginTop="20dp"
-    android:layout_marginBottom="15dp">
+    android:layout_marginBottom="15dp"
+    android:layout_marginStart="5dp">
 
     <TextView
         android:id="@+id/id_table_header_product_compare"

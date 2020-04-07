@@ -37,6 +37,11 @@ import java.util.Map;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for Store Home.
+
+Displays List of  Products.
+ */
 public class HomeStoreRecyclerViewAdapter extends RecyclerView.Adapter<HomeStoreRecyclerViewAdapter.HomeStoreRecyclerViewHolder> {
 
     Context context;

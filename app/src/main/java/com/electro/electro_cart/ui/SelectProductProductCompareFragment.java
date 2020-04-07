@@ -29,6 +29,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ *Class for product compare
+ */
 public class SelectProductProductCompareFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -54,6 +57,9 @@ public class SelectProductProductCompareFragment extends Fragment {
 
         final List<Product> productList = new ArrayList<>();
 
+        /*
+         *Display all the products that can be compared with the given item.
+         */
         collectionReference
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -80,7 +86,7 @@ public class SelectProductProductCompareFragment extends Fragment {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG);
+                Toast.makeText(getContext(), "Failed to load products. Check your internet connection.", Toast.LENGTH_LONG).show();
             }
         });
 

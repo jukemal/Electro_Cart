@@ -37,13 +37,18 @@ import java.util.Map;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for select product interface in product compare feature.
+
+Displays list of products to choose from.
+ */
 public class SelectProductProductCompareViewAdapter extends RecyclerView.Adapter<SelectProductProductCompareViewAdapter.SelectProductProductCompareViewHolder> {
 
-    Context context;
-    List<Product> productList;
-    String id;
+    private Context context;
+    private List<Product> productList;
+    private String id;
 
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
