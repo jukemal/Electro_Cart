@@ -49,12 +49,18 @@ import java.util.Map;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for home screen.
+ */
 public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private List<Product> products;
     private NavController navController;
 
+    /*
+    Layouts for each section of the home page
+     */
     private static final int SLIDER_LAYOUT = 0;
     private static final int DAILY_DEALS_LAYOUT = 1;
     private static final int TRENDING_PRODUCTS_LAYOUT = 2;
@@ -126,6 +132,10 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == SLIDER_LAYOUT) {
+            /*
+            Slider Layout
+             */
+
             SliderViewHolder sliderViewHolder=(SliderViewHolder)holder;
 
             sliderViewHolder.carouselView.setPageCount(sliderImages.length);
@@ -143,12 +153,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     Toast.makeText(context, "Clicked item: " + position, Toast.LENGTH_SHORT).show();
                 }
             });
+
         }else if (holder.getItemViewType()==DAILY_DEALS_LAYOUT){
+            /*
+            Daily Deals Layout
+             */
+
             DailyDealsViewHolder dailyDealsViewHolder=(DailyDealsViewHolder)holder;
 
             dailyDealsViewHolder.textView.setText("Daily Deals");
 
-            List<Product> productList=products;
+            final List<Product> productList=products;
 
             Collections.shuffle(productList);
 
@@ -167,12 +182,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
+
         }else if (holder.getItemViewType()==TRENDING_PRODUCTS_LAYOUT){
+            /*
+            Trending Products Layout
+             */
+
             TrandingProductViewHolder trandingProductViewHolder=(TrandingProductViewHolder) holder;
 
             trandingProductViewHolder.textView.setText("Trending Products");
 
-            List<Product> productList=products;
+            final List<Product> productList=products;
 
             Collections.shuffle(productList);
 
@@ -191,12 +211,18 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
+
+
         }else if (holder.getItemViewType()==RECENTLY_VIEWED_LAYOUT){
+            /*
+            Recently Viewed Layout
+             */
+
             RecentlyViewedViewHolder recentlyViewedViewHolder=(RecentlyViewedViewHolder) holder;
 
             recentlyViewedViewHolder.textView.setText("Recently Viewed");
 
-            List<Product> productList=products;
+            final List<Product> productList=products;
 
             Collections.shuffle(productList);
 
@@ -215,12 +241,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
+
         }else if (holder.getItemViewType()==POPULAR_PRODUCTS_LAYOUT){
+            /*
+            Popular Products Layout
+             */
+
             PopularProductViewHolder popularProductViewHolder=(PopularProductViewHolder) holder;
 
             popularProductViewHolder.textView.setText("Popular Products");
 
-            List<Product> productList=products;
+            final List<Product> productList=products;
 
             Collections.shuffle(productList);
 
@@ -239,12 +270,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
+
         }else if (holder.getItemViewType()==ALL_PRODUCTS_LAYOUT){
+            /*
+            All Products Layout
+             */
+
             AllProductViewHolder allProductViewHolder=(AllProductViewHolder) holder;
 
             allProductViewHolder.textView.setText("All Products");
 
-            List<Product> productList=products;
+            final List<Product> productList=products;
 
             Collections.shuffle(productList);
 
@@ -263,12 +299,17 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
+
         }else if (holder.getItemViewType()==LAPTOP_PRODUCTS_LAYOUT){
+            /*
+            Laptop Layout
+             */
+
             LaptopViewHolder laptopViewHolder=(LaptopViewHolder) holder;
 
             laptopViewHolder.textView.setText("All Laptops");
 
-            List<Product> laptopList=new ArrayList<>();
+            final List<Product> laptopList=new ArrayList<>();
 
             for(Product product:products){
                 if (product.getProductType()== EnumProductType.LAPTOP){
@@ -293,11 +334,15 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
             });
 
         }else if (holder.getItemViewType()==PHONE_PRODUCTS_LAYOUT){
+            /*
+            Phone Layout
+             */
+
             PhoneViewHolder phoneViewHolder=(PhoneViewHolder)holder;
 
             phoneViewHolder.textView.setText("All Phones");
 
-            List<Product> phones=new ArrayList<>();
+            final List<Product> phones=new ArrayList<>();
 
             for(Product product:products){
                 if (product.getProductType()== EnumProductType.PHONE){
@@ -321,7 +366,12 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
                     navController.navigate(R.id.action_to_navigation_generic_product_ist,bundle);
                 }
             });
+
         }else {
+            /*
+            Product List Layout
+             */
+
             SingleProductLayoutViewHolder singleProductLayoutViewHolder = (SingleProductLayoutViewHolder) holder;
 
             final Product product1 = products.get(position - 8);
@@ -442,6 +492,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Returns Layout type depending on the position.
+     */
     @Override
     public int getItemViewType(int position) {
         switch (position) {
@@ -471,6 +524,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         return products.size()+8;
     }
 
+    /*
+    Innerclass for Slider layout.
+     */
     public class SliderViewHolder extends RecyclerView.ViewHolder {
 
         CarouselView carouselView;
@@ -482,6 +538,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Innerclass for Daily Deals layout.
+     */
     public class DailyDealsViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -497,6 +556,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Innerclass for Trending Products layout.
+     */
     public class TrandingProductViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -512,6 +574,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Innerclass for Recently Viewed layout.
+     */
     public class RecentlyViewedViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -527,6 +592,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Innerclass for Popular Products layout.
+     */
     public class PopularProductViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -542,6 +610,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Innerclass for All Products layout.
+     */
     public class AllProductViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -557,6 +628,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Innerclass for Laptop layout.
+     */
     public class LaptopViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -572,6 +646,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Innerclass for Phone layout.
+     */
     public class PhoneViewHolder extends RecyclerView.ViewHolder {
 
         RecyclerView recyclerView;
@@ -587,6 +664,9 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /*
+    Innerclass for Single Product layout.
+     */
     public class SingleProductLayoutViewHolder extends RecyclerView.ViewHolder {
 
 

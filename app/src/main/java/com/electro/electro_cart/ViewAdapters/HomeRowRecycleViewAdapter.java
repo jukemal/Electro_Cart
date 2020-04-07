@@ -39,6 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+Recyclerview for displaying each row in home screen.
+ */
 public class HomeRowRecycleViewAdapter extends RecyclerView.Adapter<HomeRowRecycleViewAdapter.HomeRowRecycleViewHolder> {
 
     Context context;
@@ -193,6 +196,9 @@ public class HomeRowRecycleViewAdapter extends RecyclerView.Adapter<HomeRowRecyc
         return products.size() <= 8 ? products.size() : 8;
     }
 
+    /*
+    Innerclass for layout.
+     */
     public class HomeRowRecycleViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;

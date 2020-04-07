@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -34,11 +33,14 @@ import java.util.Locale;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+/*
+Recyclerview for displaying promotion list.
+ */
 public class PromotionRecyclerViewAdapter extends RecyclerView.Adapter<PromotionRecyclerViewAdapter.PromotionRecyclerViewHolder> {
 
     private Context context;
     private List<Product> products;
-    NavController navController;
+    private NavController navController;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -71,6 +73,9 @@ public class PromotionRecyclerViewAdapter extends RecyclerView.Adapter<Promotion
     public void onBindViewHolder(@NonNull PromotionRecyclerViewAdapter.PromotionRecyclerViewHolder holder, int position) {
         final Product product = products.get(position);
 
+        /*
+        Analytics for view_promotion event.
+         */
         Bundle bundle=new Bundle();
         bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,product.getProductType().toString());
@@ -110,11 +115,17 @@ public class PromotionRecyclerViewAdapter extends RecyclerView.Adapter<Promotion
 
         holder.ratingBar.setRating(product.getRating());
 
+        /*
+        Dialog box for showing promotion details.
+         */
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 View dialogView= LayoutInflater.from(context).inflate(R.layout.layout_promotion_list_popup,null);
 
+                /*
+                Analytics for select_promotion event.
+                 */
                 Bundle bundle=new Bundle();
                 bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
                 bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY,product.getProductType().toString());
@@ -197,6 +208,9 @@ public class PromotionRecyclerViewAdapter extends RecyclerView.Adapter<Promotion
         return products.size();
     }
 
+    /*
+    Innerclass for the layout.
+     */
     public class PromotionRecyclerViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageView;

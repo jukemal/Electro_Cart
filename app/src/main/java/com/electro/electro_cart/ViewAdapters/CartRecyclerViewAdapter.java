@@ -75,6 +75,9 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
     public void onBindViewHolder(@NonNull CartRecyclerViewAdapter.CartRecyclerViewHolder holder, int position) {
         final CartItem cartItem=cartItemList.get(position);
 
+        /*
+        Product details are loaded from the database for given cartList.
+         */
         collectionReferenceProduct.document(cartItem.getProductID())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -214,6 +217,9 @@ public class CartRecyclerViewAdapter extends RecyclerView.Adapter<CartRecyclerVi
         return cartItemList.size();
     }
 
+    /*
+    Inner class for view holder.
+     */
     public class CartRecyclerViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageView;

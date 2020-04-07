@@ -58,6 +58,7 @@ public class AddDataFragment extends Fragment {
         final CollectionReference collectionReference = db.collection("products");
 
         final String ownerId=firebaseAuth.getCurrentUser().getUid();
+        final String storeId="TQPfzE0Ak8bfgW9Hi5AIdLn6Rj43";
 
         Random random=new Random();
 
@@ -172,7 +173,7 @@ public class AddDataFragment extends Fragment {
         final Product product1 = Product.builder().name("ASUS VivoBook E12 E203")
                 .price(45000)
                 .productType(EnumProductType.LAPTOP)
-                .storeId(ownerId)
+                .storeId(storeId)
                 .description(null)
                 .specification(specification1)
                 .image_link("gs://electro-cart-5c643.appspot.com/ASUS VivoBook E12 E203-1.png")
@@ -252,7 +253,7 @@ public class AddDataFragment extends Fragment {
         final Product product2=Product.builder().name("Dell XPS 13 9370")
                 .price(180000)
                 .productType(EnumProductType.LAPTOP)
-                .storeId(ownerId)
+                .storeId(storeId)
                 .description(null)
                 .image_link("gs://electro-cart-5c643.appspot.com/Dell XPS 13 9370-1.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Dell XPS 13 9370-2.jpg")
@@ -335,7 +336,7 @@ public class AddDataFragment extends Fragment {
         final Product product3=Product.builder().name("Samsung Galaxy S20 Ultra 5G")
                 .price(160000)
                 .productType(EnumProductType.PHONE)
-                .storeId(ownerId)
+                .storeId(storeId)
                 .description(null)
                 .specification(specification3)
                 .image_link("gs://electro-cart-5c643.appspot.com/Samsung Galaxy S20 Ultra 5G-1.jpg")
@@ -412,7 +413,7 @@ public class AddDataFragment extends Fragment {
                 .name("Apple MacBook Pro 13 (Mid-2017)")
                 .price(350000)
                 .productType(EnumProductType.LAPTOP)
-                .storeId(ownerId)
+                .storeId(storeId)
                 .description(null)
                 .image_link("gs://electro-cart-5c643.appspot.com/Apple MacBook Pro 13 (Mid-2017)-1.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Apple MacBook Pro 13 (Mid-2017)-2.jpg")
@@ -493,7 +494,7 @@ public class AddDataFragment extends Fragment {
                 .name("Google Pixel 4a")
                 .price(135000)
                 .productType(EnumProductType.PHONE)
-                .storeId("36363653535353")
+                .storeId(storeId)
                 .description(null)
                 .image_link("gs://electro-cart-5c643.appspot.com/Google Pixel 4a-1jpg.jpg")
                 .image_link("gs://electro-cart-5c643.appspot.com/Google Pixel 4a-2.jpg")
@@ -575,7 +576,7 @@ public class AddDataFragment extends Fragment {
                 .name("Xiaomi Redmi Note 9 Pro")
                 .price(75000)
                 .productType(EnumProductType.PHONE)
-                .storeId("53367827833538")
+                .storeId(storeId)
                 .description(null)
                 .image_link("gs://electro-cart-5c643.appspot.com/Xiaomi Redmi Note 9 Pro-1.jpg")
                 .ar_link("gs://electro-cart-5c643.appspot.com/BoxAnimated.gltf")

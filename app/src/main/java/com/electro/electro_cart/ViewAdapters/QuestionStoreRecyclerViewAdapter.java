@@ -25,11 +25,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
+/*
+Recyclerview for Store Questions interface.
+
+Displays questions for each products in a list.
+ */
 public class QuestionStoreRecyclerViewAdapter extends RecyclerView.Adapter<QuestionStoreRecyclerViewAdapter.QuestionStoreRecyclerViewHolder> {
 
     private Context context;
@@ -75,6 +80,9 @@ public class QuestionStoreRecyclerViewAdapter extends RecyclerView.Adapter<Quest
         holder.recyclerView.setHasFixedSize(true);
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
+        /*
+        Questions for given product is fetched and displayed in a list.
+         */
         collectionReferenceProduct.document(product.getId()).collection("questions")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -104,6 +112,9 @@ public class QuestionStoreRecyclerViewAdapter extends RecyclerView.Adapter<Quest
         return productList.size();
     }
 
+    /*
+    Innerclass for the layout.
+     */
     public class QuestionStoreRecyclerViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageView;

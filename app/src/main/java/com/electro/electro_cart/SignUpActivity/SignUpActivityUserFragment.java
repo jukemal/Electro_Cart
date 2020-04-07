@@ -107,6 +107,9 @@ public class SignUpActivityUserFragment extends Fragment {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
+                                /*
+                                Analytics for setting user and logging sign up event.
+                                 */
                                 firebaseAnalytics.setUserId(user.getUid());
 
                                 Bundle bundle=new Bundle();

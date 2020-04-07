@@ -4,10 +4,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.electro.electro_cart.utils.ProductRecommendationRunnable;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -16,6 +12,15 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.electro.electro_cart.utils.ProductRecommendationRunnable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
+
+/*
+Application entry point.
+
+Setting up navigation.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
@@ -41,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
+        /*
+        Product recommendation calculation starting in background thread.
+         */
         Thread thread=new Thread(new ProductRecommendationRunnable());
         thread.start();
     }
@@ -61,12 +69,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_cart:
-                Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_to_navigation_cart);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        /*
+        Adding cart item to app bar
+         */
+        if (item.getItemId() == R.id.action_cart) {
+            Navigation.findNavController(this, R.id.nav_host_fragment).navigate(R.id.action_to_navigation_cart);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 }

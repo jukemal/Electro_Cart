@@ -25,10 +25,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Recyclerview for Transaction History Interface.
+ */
 public class TransactionHistoryStoreRecyclerViewAdapter extends RecyclerView.Adapter<TransactionHistoryStoreRecyclerViewAdapter.TransactionHistoryStoreRecyclerViewHolder> {
 
-    Context context;
-    List<User> userList;
+    private Context context;
+    private List<User> userList;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 

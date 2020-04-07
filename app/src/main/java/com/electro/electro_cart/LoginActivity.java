@@ -23,6 +23,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/*
+Class for login interface.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAnalytics firebaseAnalytics;
@@ -51,6 +54,9 @@ public class LoginActivity extends AppCompatActivity {
                 String email = txtEmail.getText().toString();
                 String password = txtPassword.getText().toString();
 
+                /*
+                Validation
+                 */
                 if (email.isEmpty() || password.isEmpty()) {
                     if (email.isEmpty()) {
                         TextInputLayout txtEmailLayout = findViewById(R.id.txtEmailLayout);
@@ -61,12 +67,21 @@ public class LoginActivity extends AppCompatActivity {
                         txtPasswordLayout.setError("Please enter your password");
                     }
                 } else {
+                    /*
+                    Sign in with email and password.
+                     */
                     firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                /*
+                                Analytics set user
+                                 */
                                 firebaseAnalytics.setUserId(task.getResult().getUser().getUid());
 
+                                /*
+                                Adding user to user collection.
+                                 */
                                 db.collection("users").document(task.getResult().getUser().getUid()).get()
                                         .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
@@ -78,13 +93,18 @@ public class LoginActivity extends AppCompatActivity {
 
                                                         User user = document.toObject(User.class);
 
+                                                        /*
+                                                        Checking user type and open appropriate interface.
+                                                         */
                                                         if (user.getUserType() == EnumUserType.STORE) {
                                                             Toast.makeText(LoginActivity.this, "Login Successful.", Toast.LENGTH_SHORT).show();
                                                             Intent intent = new Intent(getApplicationContext(), StoreMainActivity.class);
                                                             startActivity(intent);
                                                             finish();
                                                         } else {
-
+                                                            /*
+                                                            Analytics for login_in event.
+                                                             */
                                                             Bundle bundle = new Bundle();
                                                             bundle.putString(FirebaseAnalytics.Param.METHOD,"email");
                                                             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN,bundle);
@@ -112,6 +132,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        Sign up interface.
+         */
         Button btnSignUp = findViewById(R.id.btnSignUp);
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {

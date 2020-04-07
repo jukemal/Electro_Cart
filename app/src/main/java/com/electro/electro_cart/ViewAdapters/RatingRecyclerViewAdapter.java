@@ -34,12 +34,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+/*
+Recyclerview for displaying rating list.
+ */
 public class RatingRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    Context context;
-    List<Rating> ratingList;
-    String id;
+    private Context context;
+    private List<Rating> ratingList;
+    private String id;
 
+    /*
+    Layouts types.
+     */
     private static final int ADD_RATING_LAYOUT = 0;
     private static final int RATING_LAYOUT = 1;
 
@@ -94,6 +100,10 @@ public class RatingRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerVie
         }
 
         if (holder.getItemViewType()==ADD_RATING_LAYOUT){
+            /*
+            Layout for Add new rating
+             */
+
             AddRatingViewHolder addRatingViewHolder=(AddRatingViewHolder)holder;
 
             addRatingViewHolder.buttonAdd.setOnClickListener(new View.OnClickListener() {
@@ -161,6 +171,10 @@ public class RatingRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerVie
                 }
             });
         }else {
+            /*
+            Layout for displaying rating
+             */
+
             RatingViewHolder ratingViewHolder=(RatingViewHolder)holder;
 
             ratingViewHolder.textViewVotes.setText(String.valueOf(rating.getVotes()));
@@ -289,6 +303,9 @@ public class RatingRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerVie
         else return RATING_LAYOUT;
     }
 
+    /*
+    Innerclass for Rating layout
+     */
     public class RatingViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageViewUpVote;
@@ -320,6 +337,9 @@ public class RatingRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerVie
         }
     }
 
+    /*
+    Innerclass for Add new layout.
+     */
     public class AddRatingViewHolder extends RecyclerView.ViewHolder{
 
         RatingBar ratingBar;

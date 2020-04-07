@@ -206,7 +206,6 @@
                 app:isb_show_tick_texts="true"
                 app:isb_thumb_color="@color/colorPrimary"
                 app:isb_thumb_size="20dp"
-                app:isb_tick_marks_drawable="@mipmap/ic_launcher"
                 app:isb_tick_marks_size="13dp"
                 app:isb_tick_texts_color="@color/colorAccent"
                 app:isb_tick_texts_size="15sp"

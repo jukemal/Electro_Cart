@@ -37,12 +37,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+Recyclerview for displaying products as a vertical list.
+ */
 public class ProductListRecycleViewAdapter extends RecyclerView.Adapter<ProductListRecycleViewAdapter.ProductListRecycleViewHolder> {
 
-    Context context;
-    List<Product> products;
+    private Context context;
+    private List<Product> products;
 
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 

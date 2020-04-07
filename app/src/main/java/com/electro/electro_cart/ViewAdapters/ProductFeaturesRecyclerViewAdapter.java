@@ -19,12 +19,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+Responsible for displaying feature list in product page.
+
+For each feature one roe is displayed.
+ */
 public class ProductFeaturesRecyclerViewAdapter extends RecyclerView.Adapter<ProductFeaturesRecyclerViewAdapter.ProductFeaturesRecyclerViewHolder> {
 
-    Context context;
-    Specification specification;
+    private Context context;
+    private Specification specification;
 
-    LinkedHashMap<String,Object> specificationMap;
+    private LinkedHashMap<String,Object> specificationMap;
 
     public ProductFeaturesRecyclerViewAdapter(Context context, Specification specification) {
         this.context = context;
