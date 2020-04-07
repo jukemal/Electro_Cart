@@ -31,6 +31,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Class for Store home.
+ * */
 public class HomeStoreFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -53,6 +56,9 @@ public class HomeStoreFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        /*
+         * All products for the currently logged in shop is fetched and displayed in a list.
+         * */
         collectionReferenceProduct
                 .whereEqualTo("storeId",firebaseAuth.getCurrentUser().getUid())
                 .get()

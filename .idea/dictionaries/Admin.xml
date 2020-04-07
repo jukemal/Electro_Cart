@@ -2,6 +2,7 @@
   <dictionary name="Admin">
     <words>
       <w>electro</w>
+      <w>refetching</w>
     </words>
   </dictionary>
 </component>

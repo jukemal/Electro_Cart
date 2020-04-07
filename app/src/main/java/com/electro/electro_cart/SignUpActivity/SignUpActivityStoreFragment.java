@@ -27,7 +27,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+/*
+* Class for store fragment of the signup activity
+* */
 public class SignUpActivityStoreFragment extends Fragment {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();

@@ -46,6 +46,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Class for cart fragment
+ */
 public class CartFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -78,6 +81,9 @@ public class CartFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_cart, container, false);
 
+        /*
+         *Analytics for cart view
+         */
         firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         firebaseAnalytics.setUserId(firebaseAuth.getUid());
 
@@ -103,6 +109,9 @@ public class CartFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        /*
+         *Cart for currently logged in user is fetched and displaed.
+         */
         collectionReference.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -160,6 +169,9 @@ public class CartFragment extends Fragment {
                     }
                 });
 
+        /*
+         *Proceed button
+         */
         buttonProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,6 +188,9 @@ public class CartFragment extends Fragment {
                                 bundle.putString(FirebaseAnalytics.Param.CURRENCY,"LKR");
                                 bundle.putString(FirebaseAnalytics.Param.PRICE,String.valueOf(total));
 
+                                /*
+                                 *Analytics for purchase event.
+                                 */
                                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE,bundle);
 
                                 Bundle bundlePoints=new Bundle();
@@ -187,6 +202,9 @@ public class CartFragment extends Fragment {
                                 Map<String, Object> data = new HashMap<>();
                                 data.put("orderStatus", EnumOrderTrackingStatus.ORDER_ACCEPTED);
 
+                                /*
+                                 *Setting order status in the database
+                                 */
                                 collectionReferenceOrderTracking.add(data)
                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
@@ -206,6 +224,9 @@ public class CartFragment extends Fragment {
                                                                     OrderHistory orderHistory = OrderHistory.builder()
                                                                             .cartItemList(cartItemList).build();
 
+                                                                    /*
+                                                                     *Adding purchased items details to the order history.
+                                                                     */
                                                                     if (!cartItemList.isEmpty()) {
                                                                         collectionReferenceOrderHistory.add(orderHistory)
                                                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

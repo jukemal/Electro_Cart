@@ -31,6 +31,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ *Class for store fragment.
+ */
 public class StoreFragment extends Fragment {
 
     NavController navController;
@@ -61,6 +64,9 @@ public class StoreFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        /*
+         *Display all the products that belongs to the given store.
+         */
         collectionReferenceUser.document(StoreId).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override

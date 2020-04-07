@@ -44,6 +44,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/*
+ * Class for search
+ * */
 public class SearchFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -65,6 +68,9 @@ public class SearchFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        /*
+         * Initially setting the list with all the products.
+         * */
         collectionReference.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -89,6 +95,9 @@ public class SearchFragment extends Fragment {
                     }
                 });
 
+        /*
+         * Setting up the search widget
+         * */
         searchView = root.findViewById(R.id.searchView_search);
 
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -111,6 +120,11 @@ public class SearchFragment extends Fragment {
             }
         });
 
+        /*
+         * Sort menu
+         *
+         * For each menu item, list is sorted differently.
+         * */
         ImageButton imageButton = root.findViewById(R.id.sort_imgBtn);
 
         PopupMenu popupMenu = new PopupMenu(getActivity(), imageButton);
@@ -278,7 +292,9 @@ public class SearchFragment extends Fragment {
         });
 
         //--------------------------------------------------------------------------------------------------------
-        //Filter
+        /*
+         * Filter Menu
+         * */
 
         ImageButton imageButtonFilter=root.findViewById(R.id.filter_imgBtn);
 

@@ -28,6 +28,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Class for store promotion
+ * */
 public class PromotionStoreFragment extends Fragment {
 
     private RecyclerView recyclerView;
@@ -50,6 +53,9 @@ public class PromotionStoreFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
 
+        /*
+         * All products for the currently logged in shop is fetched and displayed with promotion details in a list.
+         * */
         collectionReferenceProduct
                 .whereEqualTo("storeId",firebaseAuth.getCurrentUser().getUid())
                 .get()
@@ -69,6 +75,10 @@ public class PromotionStoreFragment extends Fragment {
                             promotionStoreRecyclerViewAdapter=new PromotionStoreRecyclerViewAdapter(getActivity(), productList, new PromotionStoreRecyclerViewAdapterClickInterface() {
                                 @Override
                                 public void UpdatePromotionList(int position) {
+                                    /*
+                                     * When a promotion is added or updated, refetching details and  updating the list.
+                                     * */
+
                                     progressBar.setVisibility(View.VISIBLE);
                                     recyclerView.setVisibility(View.GONE);
 
