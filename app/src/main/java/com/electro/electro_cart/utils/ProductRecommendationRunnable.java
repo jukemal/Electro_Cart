@@ -85,7 +85,6 @@ public class ProductRecommendationRunnable implements Runnable {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
-
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                         Log.d(TAG, document.getId() + " => " + document.getData());
 
@@ -147,7 +146,15 @@ public class ProductRecommendationRunnable implements Runnable {
     private double productCorrelation(Map<String, Map<String, Integer>> map, String user1Id, String user2Id) {
         Map<String, Integer> user1_ratingList = map.get(user1Id);
 
+        if (user1_ratingList==null){
+            return 0;
+        }
+
         Map<String, Integer> user2_ratingList = map.get(user2Id);
+
+        if(user2_ratingList==null){
+            return 0;
+        }
 
         List<ExistsInBoth> existsInBothList = new ArrayList<>();
 
