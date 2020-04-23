@@ -336,7 +336,7 @@ public class ProductRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView
                 @Override
                 public void onClick(View view) {
                     Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
-                    sceneViewerIntent.setData(Uri.parse("https://raw.githubusercontent.com/jukemal/3D_Models/master/laptop.gltf?mode=ar_only"));
+                    sceneViewerIntent.setData(Uri.parse("https://raw.githubusercontent.com/jukemal/3D_Models/master/laptop.glb?mode=ar_only"));
                     sceneViewerIntent.setPackage("com.google.ar.core");
                     context.startActivity(sceneViewerIntent);
                 }
